@@ -1,0 +1,2208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Rigging Calculator — Siemens Energy</title>
+
+<!-- PWA -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rigging Calc">
+<meta name="application-name" content="Rigging Calc">
+<meta name="theme-color" content="#0a0c10">
+<meta name="description" content="Siemens Energy field rigging calculator — sling selector, lift plan, weight estimator and hardware tables.">
+
+<!-- PWA icons (inline SVG crane as data URI) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='38' fill='%23009999'/%3E%3Ctext x='96' y='140' font-size='110' text-anchor='middle' font-family='system-ui' fill='white'%3E🏗%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='38' fill='%23009999'/%3E%3Ctext x='96' y='140' font-size='110' text-anchor='middle' font-family='system-ui' fill='white'%3E🏗%3C/text%3E%3C/svg%3E">
+
+<!-- Web App Manifest (inline) -->
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Rigging%20Calculator%20%E2%80%94%20Siemens%20Energy%22%2C%22short_name%22%3A%22Rigging%20Calc%22%2C%22description%22%3A%22Field%20rigging%20calculator%20for%20Siemens%20Energy%20operations%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230c0e12%22%2C%22theme_color%22%3A%22%230a0c10%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%2520viewBox%3D'0%25200%2520192%2520192'%253E%253Crect%2520width%3D'192'%2520height%3D'192'%2520rx%3D'38'%2520fill%3D'%2523009999'%2F%253E%253Ctext%2520x%3D'96'%2520y%3D'140'%2520font-size%3D'110'%2520text-anchor%3D'middle'%2520font-family%3D'system-ui'%2520fill%3D'white'%253E%25F0%259F%258F%2597%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+button, input, select, textarea { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+
+:root {
+  --bg: #0c0e12;
+  --surface: #141720;
+  --surface2: #1a1e28;
+  --border: #252a36;
+  --border-light: #2e3440;
+  --text: #e0e4ec;
+  --text2: #8a90a0;
+  --text3: #5a6070;
+  --accent: #009999;
+  --accent-dim: rgba(0,153,153,0.12);
+  --accent-border: rgba(0,153,153,0.3);
+  --purple: #641e8c;
+  --purple-dim: rgba(100,30,140,0.12);
+  --purple-border: rgba(100,30,140,0.35);
+  --teal: #009999;
+  --teal-dim: rgba(0,153,153,0.12);
+  --teal-border: rgba(0,153,153,0.3);
+  --green: #4caf50;
+  --green-dim: rgba(76,175,80,0.12);
+  --red: #e05a5a;
+  --red-dim: rgba(224,90,90,0.12);
+  --yellow: #ffda00;
+  --yellow-dim: rgba(255,218,0,0.12);
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── HEADER ── */
+.app-header {
+  background: #0a0c10;
+  border-bottom: 0.5px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo-wrap { display: flex; align-items: center; gap: 12px; }
+.logo-icon {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+}
+.logo-text { font-size: 16px; font-weight: 700; color: var(--text); }
+.logo-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.se-logo { height: 28px; width: auto; flex-shrink: 0; }
+@media (max-width: 640px) {
+  .se-logo { height: 22px; }
+}
+.header-badge {
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 0.5px solid var(--accent-border);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* ── LAYOUT ── */
+.main { max-width: 1200px; margin: 0 auto; padding: 20px 18px; }
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 4px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+.tab-btn {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 9px 18px;
+  border: none;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  transition: all 0.15s;
+}
+.tab-btn:hover { color: var(--text); background: var(--surface2); }
+.tab-btn.active { background: var(--accent); color: #fff; font-weight: 600; }
+.tab-btn i { font-size: 16px; }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 14px 18px;
+  border-bottom: 0.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title i { color: var(--accent); font-size: 18px; }
+.card-body { padding: 18px; }
+
+/* ── FORMS ── */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+}
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text3);
+}
+input, select, textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
+select option { background: var(--surface); }
+
+.unit-hint { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+/* ── RESULTS ── */
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+.result-box {
+  background: var(--surface2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+}
+.result-box.highlight {
+  background: var(--accent-dim);
+  border-color: var(--accent-border);
+}
+.result-box.safe {
+  background: var(--green-dim);
+  border-color: rgba(76,175,80,0.3);
+}
+.result-box.danger {
+  background: var(--red-dim);
+  border-color: rgba(224,90,90,0.3);
+}
+.result-box.warn {
+  background: var(--yellow-dim);
+  border-color: rgba(255,218,0,0.3);
+}
+.result-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); margin-bottom: 2px; }
+.result-val { font-size: 18px; font-weight: 700; color: var(--text); }
+.result-box.highlight .result-val { color: var(--accent); }
+.result-box.safe .result-val { color: var(--green); }
+.result-box.danger .result-val { color: var(--red); }
+.result-box.warn .result-val { color: #e6b800; }
+.result-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* ── STATUS BAR ── */
+.status-bar {
+  margin-top: 14px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.status-bar.pass { background: var(--green-dim); color: var(--green); border: 0.5px solid rgba(76,175,80,0.3); }
+.status-bar.fail { background: var(--red-dim); color: var(--red); border: 0.5px solid rgba(224,90,90,0.3); }
+.status-bar.warn { background: var(--yellow-dim); color: #e6b800; border: 0.5px solid rgba(255,218,0,0.3); }
+.status-bar i { font-size: 18px; }
+
+/* ── TABLES ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.data-table th {
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text3);
+  font-weight: 600;
+  background: var(--bg);
+  border-bottom: 0.5px solid var(--border);
+  position: sticky;
+  top: 0;
+}
+.data-table td {
+  padding: 7px 10px;
+  border-bottom: 0.5px solid var(--border);
+  color: var(--text);
+}
+.data-table tr:hover td { background: var(--surface2); }
+.data-table .mono { font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 12px; }
+.table-wrap { overflow-x: auto; max-height: 400px; overflow-y: auto; }
+
+/* ── BUTTONS ── */
+.btn {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0.5px solid var(--border);
+  background: transparent;
+  color: var(--text2);
+  transition: all 0.15s;
+}
+.btn:hover { border-color: var(--text3); color: var(--text); }
+.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn.primary:hover { background: #007777; }
+
+/* ── LIFT PLAN ── */
+.lift-plan-section { margin-bottom: 16px; }
+.lift-plan-section .section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 0.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+textarea { min-height: 70px; resize: vertical; }
+
+/* ── TOGGLE INPUTS ── */
+.toggle-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.toggle-option {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 0.5px solid var(--border);
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.toggle-option:hover { border-color: var(--accent); color: var(--accent); }
+.toggle-option.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* ── SAFETY NOTE ── */
+.safety-note {
+  background: var(--red-dim);
+  border: 0.5px solid rgba(224,90,90,0.25);
+  border-left: 3px solid var(--red);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #cc8888;
+  line-height: 1.6;
+  margin-top: 16px;
+}
+.safety-note strong { color: var(--red); }
+
+/* ── RESPONSIVE ── */
+
+/* Tablet */
+@media (max-width: 768px) {
+  .form-grid { grid-template-columns: 1fr 1fr; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  /* Header */
+  .app-header { padding: 10px 12px; gap: 8px; }
+  .logo-text { font-size: 14px; }
+  .logo-sub { display: none; }
+  .logo-icon { width: 32px; height: 32px; font-size: 17px; }
+  .header-badge { display: none; }
+  .app-header > div:last-child .btn { display: none; } /* hide print btn on mobile */
+  .se-logo { height: 20px; }
+
+  /* Main layout */
+  .main { padding: 10px 10px 80px; } /* bottom pad for sticky tab bar */
+
+  /* Tab bar — sticky at bottom on mobile */
+  .tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-top: 0.5px solid var(--border);
+    background: #0a0c10;
+    padding: 6px 8px;
+    gap: 4px;
+    z-index: 200;
+    justify-content: space-around;
+    overflow-x: visible;
+  }
+  .tab-btn {
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 4px;
+    gap: 3px;
+    font-size: 10px;
+    min-width: 0;
+    border-radius: var(--radius);
+  }
+  .tab-btn i { font-size: 20px; }
+  .tab-btn span.tab-label { display: block; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 64px; }
+
+  /* Cards */
+  .card-header { padding: 12px 14px; }
+  .card-body { padding: 14px; }
+  .card-title { font-size: 13px; }
+
+  /* Forms — single column on mobile */
+  .form-grid { grid-template-columns: 1fr; gap: 12px; }
+
+  /* Bigger touch targets for inputs */
+  input, select, textarea {
+    padding: 11px 12px;
+    font-size: 16px; /* prevents iOS zoom on focus */
+    border-radius: var(--radius);
+  }
+  .form-label { font-size: 11px; }
+
+  /* Results — 2 col grid */
+  .result-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .result-val { font-size: 16px; }
+  .result-lbl { font-size: 9px; }
+
+  /* Status bar */
+  .status-bar { font-size: 12px; padding: 10px 12px; }
+
+  /* Toggle buttons — bigger tap targets */
+  .toggle-option { padding: 9px 16px; font-size: 13px; }
+
+  /* Tables — allow horizontal scroll */
+  .table-wrap { max-height: 300px; -webkit-overflow-scrolling: touch; }
+  .data-table th, .data-table td { padding: 8px 8px; font-size: 11px; white-space: nowrap; }
+
+  /* Buttons */
+  .btn { padding: 11px 16px; font-size: 13px; }
+
+  /* Lift plan buttons */
+  #saved-plans-bar .card-body { padding: 10px 12px; }
+
+  /* Photo remove always visible on touch */
+  .photo-remove { opacity: 1; width: 32px; height: 32px; font-size: 16px; }
+
+  /* Photo grid single column */
+  .photo-grid { grid-template-columns: 1fr; }
+
+  /* Safe area insets for notched phones (iPhone X+) */
+  .app-header { padding-top: max(10px, env(safe-area-inset-top)); padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); }
+  .tab-bar { padding-bottom: max(6px, env(safe-area-inset-bottom)); }
+  .main { padding-bottom: max(80px, calc(70px + env(safe-area-inset-bottom))); padding-left: max(10px, env(safe-area-inset-left)); padding-right: max(10px, env(safe-area-inset-right)); }
+
+  /* Collapse span-2 elements to full width on mobile */
+  .form-group[style*="span 2"] { grid-column: span 1 !important; }}
+/* ── PHOTO GALLERY ── */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+.photo-card {
+  background: var(--surface2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+}
+.photo-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.photo-card img:hover { opacity: 0.85; }
+.photo-card-body { padding: 10px 12px; }
+.photo-card-body textarea {
+  min-height: 48px;
+  font-size: 12px;
+  padding: 6px 8px;
+  border: 0.5px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg);
+  color: var(--text);
+  resize: vertical;
+  width: 100%;
+}
+.photo-card-body textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-dim);
+}
+.photo-card-body textarea::placeholder { color: var(--text3); }
+.photo-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 10px;
+  color: var(--text3);
+}
+.photo-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.65);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.photo-card:hover .photo-remove { opacity: 1; }
+.photo-remove:hover { background: var(--red); }
+.photo-upload-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+  gap: 8px;
+  color: var(--text3);
+  position: relative;
+  background: transparent;
+  font-family: inherit;
+  width: 100%;
+}
+.photo-upload-btn:hover { border-color: var(--accent); color: var(--accent); }
+.photo-upload-btn i { font-size: 28px; }
+.photo-upload-btn span { font-size: 12px; font-weight: 500; }
+.photo-upload-btn input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+.photo-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 0.5px solid var(--accent-border);
+}
+.photo-tag-select {
+  font-size: 11px;
+  padding: 3px 6px;
+  border: 0.5px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  outline: none;
+  width: 100%;
+  margin-top: 6px;
+}
+.photo-tag-select:focus { border-color: var(--accent); }
+
+/* ── LIGHTBOX ── */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  cursor: pointer;
+}
+.lightbox-overlay.open { display: flex; }
+.lightbox-overlay img {
+  max-width: 90%;
+  max-height: 75vh;
+  object-fit: contain;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+.lightbox-caption {
+  color: #ccc;
+  font-size: 14px;
+  text-align: center;
+  max-width: 600px;
+}
+.lightbox-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 28px;
+  cursor: pointer;
+}
+.lightbox-close:hover { color: #fff; }
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox-nav:hover { background: rgba(255,255,255,0.2); }
+.lightbox-nav.prev { left: 18px; }
+.lightbox-nav.next { right: 18px; }
+
+@media print {
+  .app-header, .tab-bar { display: none; }
+  .tab-panel { display: block !important; page-break-inside: avoid; }
+  body { background: #fff; color: #000; }
+  .card { border: 1px solid #ccc; break-inside: avoid; }
+  .photo-card img { height: auto; max-height: 200px; }
+  .photo-remove, .photo-upload-btn { display: none !important; }
+  .lightbox-overlay { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="logo-wrap">
+    <div class="logo-icon"><i class="ti ti-crane" aria-hidden="true"></i></div>
+    <div>
+      <div class="logo-text">Rigging Calculator</div>
+      <div class="logo-sub">Siemens Energy — Field Operations</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:12px; align-items:center;">
+    <span class="header-badge">AS 4991</span>
+    <button class="btn" onclick="window.print()"><i class="ti ti-printer" aria-hidden="true"></i> Print</button>
+    <svg class="se-logo" viewBox="0 0 1000 343" xmlns="http://www.w3.org/2000/svg" aria-label="Siemens Energy logo">
+      <path style="fill:#099" d="m68.94,60.1q-19.36-8.71-23.66-11.4-5.17-3.33-5.17-8.6 0-14.09 25.62-14.09 18.2,0 39.41,8.47v-28.93q-28.52-5.55-43.59-5.55-27.33,0-44.34,11.72-17.21,11.83-17.21,34.42 0,17.54 11.82,29.04 9.12,8.72 39.19,21.08 16.75,6.89 20.83,10.76a11.78,11.78 0 0 1 3.98,9.03q0,14.42-27.29,14.42-19.77,0-45.44-8.08v30.07a207.29,207.27 0 0 0 47.23,5.54q27.76,0 45.2-10.53 21.52-13.01 21.52-37.76 0-17.22-10.98-28.08-9.24-9.15-37.12-21.53z m72.12,94.82h42.54v-152.27h-42.54z m122.56-65.22h59.28v-25.13h-59.28v-34.38h68.1v-27.54h-109.1v152.27h110.86v-29.09h-69.86z m191.1,10.24-38.32-97.29h-55.15v152.27h29.97v-107.81l43.8,109.36h26.37l44.67-109.36v107.81h40.33v-152.27h-52.39z m171.7-10.24h59.28v-25.13h-59.28v-34.38h68.1v-27.54h-109.1v152.27h110.85v-29.09h-69.85z m199.46,14.88l-52.3-101.93h-49.31v152.27h29.98v-103.31l53.69,103.31h47.91v-152.27h-29.97z m126.02-44.48q-19.35-8.71-23.66-11.4-5.17-3.33-5.17-8.6 0-14.09 25.62-14.09 18.2,0 39.41,8.47v-28.93q-28.52-5.55-43.59-5.55-27.33,0-44.34,11.72-17.21,11.83-17.21,34.42 0,17.54 11.82,29.04 9.12,8.72 39.19,21.08 16.76,6.89 20.83,10.76a11.78,11.78 0 0 1 3.98,9.03q0,14.42-27.29,14.42-19.77,0-45.44-8.08v30.07a207.29,207.27 0 0 0 47.23,5.54q27.76,0 45.2-10.53 21.52-13.01 21.52-37.76 0-17.22-10.98-28.08-9.24-9.15-37.12-21.53z"/>
+      <path style="fill:#641e8c" d="m123.9,189.25c-13.3-.75-26.8-1.25-40.4-1.25s-27.1,.5-40.4,1.25a45.5,45.5 0 0 0-43.1,45.25v62a45.5,45.5 0 0 0 43.1,45.25c13.3,.75 26.8,1.25 40.4,1.25s27.1-.5 40.4-1.25a45.5,45.5 0 0 0 43.1-45.25v-3.5h-19.5v3.5a25.9,25.9 0 0 1-24.4,25.7c-13.1,.8-26.3,1.3-39.6,1.3s-26.5-.5-39.6-1.3a25.9,25.9 0 0 1-24.4-25.7v-62a25.9,25.9 0 0 1 24.4-25.7c13.1-.8 26.3-1.3 39.6-1.3s26.5,.5 39.6,1.3a25.9,25.9 0 0 1 24.4,25.7v21h-80.5v20h100v-41a45.5,45.5 0 0 0-43.1-45.25z m175.15,.25c-10.75-.9-21.75-1.5-32.7-1.5s-21.95,.6-32.69,1.5a45.5,45.5 0 0 0-41.31,45v107h19.5v-107a26,26 0 0 1 24.28-25.78c9.94-.69 20.02-1.22 30.22-1.22s20.29,.5 30.23,1.22a26,26 0 0 1 24.27,25.78v107h19.5v-107a45.5,45.5 0 0 0-41.3-45z m189.95-.25c-13.3-.75-26.8-1.25-40.4-1.25s-27.1,.5-40.4,1.25a45.5,45.5 0 0 0-43.1,45.25v62a45.5,45.5 0 0 0 43.1,45.25c13.3,.75 26.8,1.25 40.4,1.25s27.1-.5 40.4-1.25a45.5,45.5 0 0 0 43.1-45.25v-3.5h-19.5v3.5a25.9,25.9 0 0 1-24.4,25.7c-13.1,.8-26.3,1.3-39.6,1.3s-26.5-.5-39.6-1.3a25.9,25.9 0 0 1-24.4-25.7v-62a25.9,25.9 0 0 1 24.4-25.7c13.1-.8 26.3-1.3 39.6-1.3s26.5,.5 39.6,1.3a25.9,25.9 0 0 1 24.4,25.7v21h-80.5v20h100v-41a45.5,45.5 0 0 0-43.1-45.25z m70.59,45.24v107h19.5v-107c0-13.67 11.22-25.5 24.77-25.5h39.73v-19.51h-40.41c-21.24,.02-43.59,18.44-43.59,45.01z m221.91-45.24c-13.3-.75-26.8-1.25-40.4-1.25s-27.1,.5-40.4,1.25a45.5,45.5 0 0 0-43.1,45.25v62a45.5,45.5 0 0 0 43.1,45.25c13.3,.75 26.8,1.25 40.4,1.25s27.1-.5 40.4-1.25a45.5,45.5 0 0 0 43.1-45.25v-41h-100v20h80.5v21a25.9,25.9 0 0 1-24.4,25.7c-13.1,.8-26.3,1.3-39.6,1.3s-26.5-.5-39.6-1.3a25.9,25.9 0 0 1-24.4-25.7v-62a25.9,25.9 0 0 1 24.4-25.7c13.1-.8 26.3-1.3 39.6-1.3s26.5,.5 39.6,1.3a25.9,25.9 0 0 1 24.4,25.7v3.5h19.5v-3.5a45.5,45.5 0 0 0-43.1-45.25z m218.5,.25h-24.42l-66.25,87.9a44.8,44.8 0 0 0-9.06,27.1v37h19.5v-37a25.4,25.4 0 0 1 5.15-15.37z m-147.73,0h-25.46l69.46,82.77 12.04-15.99z"/>
+    </svg>
+  </div>
+</header>
+
+<main class="main">
+
+  <div class="tab-bar" role="tablist">
+    <button class="tab-btn active" onclick="showTab('slingsel',this)" role="tab"><i class="ti ti-target-arrow" aria-hidden="true"></i><span class="tab-label">Sling selector</span></button>
+    <button class="tab-btn" onclick="showTab('liftplan',this)" role="tab"><i class="ti ti-clipboard-check" aria-hidden="true"></i><span class="tab-label">Lift plan</span></button>
+    <button class="tab-btn" onclick="showTab('weight',this)" role="tab"><i class="ti ti-scale" aria-hidden="true"></i><span class="tab-label">Weight</span></button>
+    <button class="tab-btn" onclick="showTab('hardware',this)" role="tab"><i class="ti ti-link" aria-hidden="true"></i><span class="tab-label">Hardware</span></button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- TAB 1: WEIGHT ESTIMATOR                                           -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-weight">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-scale" aria-hidden="true"></i> Load weight estimator</div>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="w-shape" class="form-label">Shape</label>
+            <select id="w-shape" onchange="calcWeight()">
+              <option value="box">Rectangular solid / box</option>
+              <option value="cylinder">Cylinder / pipe (solid)</option>
+              <option value="pipe">Hollow pipe / tube</option>
+              <option value="plate">Flat plate / sheet</option>
+              <option value="sphere">Sphere</option>
+              <option value="ibeam">I-beam (per metre)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="w-material" class="form-label">Material</label>
+            <select id="w-material" onchange="calcWeight()">
+              <option value="7850">Mild steel (7,850 kg/m³)</option>
+              <option value="7930">Stainless steel (7,930 kg/m³)</option>
+              <option value="8940">Copper (8,940 kg/m³)</option>
+              <option value="2700">Aluminium (2,700 kg/m³)</option>
+              <option value="8600">Bronze (8,600 kg/m³)</option>
+              <option value="2400">Concrete (2,400 kg/m³)</option>
+              <option value="7200">Cast iron (7,200 kg/m³)</option>
+              <option value="800">Timber / hardwood (800 kg/m³)</option>
+              <option value="1000">Water (1,000 kg/m³)</option>
+              <option value="custom">Custom density…</option>
+            </select>
+          </div>
+          <div class="form-group" id="w-custom-density-group" style="display:none;">
+            <label for="w-custom-density" class="form-label">Custom density</label>
+            <input id="w-custom-density" type="number" min="0" step="1" value="7850" oninput="calcWeight()">
+            <div class="unit-hint">kg/m³</div>
+          </div>
+        </div>
+
+        <div id="w-dims" style="margin-top:16px;"></div>
+        <div id="weight-results"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-table" aria-hidden="true"></i> Common material densities</div>
+      </div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Material</th><th>Density (kg/m³)</th><th>Plate 1m × 1m × 10mm</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>Mild steel</td><td class="mono">7,850</td><td class="mono">78.5 kg</td><td>Most common structural</td></tr>
+              <tr><td>Stainless 304</td><td class="mono">7,930</td><td class="mono">79.3 kg</td><td>Corrosion-resistant</td></tr>
+              <tr><td>Aluminium 6061</td><td class="mono">2,700</td><td class="mono">27.0 kg</td><td>~⅓ weight of steel</td></tr>
+              <tr><td>Copper</td><td class="mono">8,940</td><td class="mono">89.4 kg</td><td>Electrical conductors</td></tr>
+              <tr><td>Cast iron</td><td class="mono">7,200</td><td class="mono">72.0 kg</td><td>Turbine housings</td></tr>
+              <tr><td>Concrete</td><td class="mono">2,400</td><td class="mono">24.0 kg</td><td>Reinforced ≈ 2,500</td></tr>
+              <tr><td>Hardwood</td><td class="mono">800</td><td class="mono">8.0 kg</td><td>Varies 600–1,100</td></tr>
+              <tr><td>Water</td><td class="mono">1,000</td><td class="mono">10.0 kg</td><td>Hydro-testing</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- TAB 2: SLING SELECTOR                                             -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="tab-panel active" id="tab-slingsel">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-target-arrow" aria-hidden="true"></i> Sling selector — what WLL do I need?</div>
+      </div>
+      <div class="card-body">
+        <div style="font-size:12px; color:var(--text2); margin-bottom:14px;">
+          Enter the load weight, number of legs, angle and hitch type — calculates the minimum WLL per sling leg and recommends matching wire rope, chain and webbing slings.
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="sel-load" class="form-label">Load weight (kg)</label>
+            <input id="sel-load" type="number" min="0" step="0.1" value="5000" oninput="calcSelector()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Number of sling legs</label>
+            <div class="toggle-row" id="sel-legs">
+              <button class="toggle-option" onclick="setSelLegs(1,this)">1</button>
+              <button class="toggle-option active" onclick="setSelLegs(2,this)">2</button>
+              <button class="toggle-option" onclick="setSelLegs(3,this)">3</button>
+              <button class="toggle-option" onclick="setSelLegs(4,this)">4</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="sel-angle" class="form-label">Sling angle from vertical</label>
+            <input id="sel-angle" type="range" min="0" max="60" step="1" value="30" oninput="calcSelector(); document.getElementById('sel-angle-val').textContent=this.value+'°'" style="accent-color:var(--accent);">
+            <div class="unit-hint">Angle: <strong id="sel-angle-val">30°</strong></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hitch type</label>
+            <div class="toggle-row" id="sel-hitch">
+              <button class="toggle-option active" onclick="setSelHitch('vertical',this)">Vertical</button>
+              <button class="toggle-option" onclick="setSelHitch('choker',this)">Choker</button>
+              <button class="toggle-option" onclick="setSelHitch('basket',this)">Basket</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="sel-sf" class="form-label">Safety factor</label>
+            <select id="sel-sf" onchange="calcSelector()">
+              <option value="5" selected>5:1 (standard wire rope)</option>
+              <option value="4">4:1 (chain slings)</option>
+              <option value="6">6:1 (personnel lift)</option>
+              <option value="10">10:1 (critical lift)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sel-contingency" class="form-label">Weight contingency</label>
+            <select id="sel-contingency" onchange="calcSelector()">
+              <option value="1.0">None (exact weight known)</option>
+              <option value="1.1" selected>+10% (standard)</option>
+              <option value="1.15">+15% (estimated weight)</option>
+              <option value="1.25">+25% (unknown weight)</option>
+            </select>
+          </div>
+        </div>
+        <div id="selector-results"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- TAB 3: HARDWARE TABLES                                            -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-hardware">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-link" aria-hidden="true"></i> Wire rope sling WLL</div>
+        <span class="header-badge">6×36 IWRC · 5:1 SF</span>
+      </div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Diameter (mm)</th><th>Vertical (kg)</th><th>Choker (kg)</th><th>Basket (kg)</th><th>2-leg 45° (kg)</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">8</td><td class="mono">640</td><td class="mono">480</td><td class="mono">1,280</td><td class="mono">900</td></tr>
+              <tr><td class="mono">10</td><td class="mono">1,000</td><td class="mono">750</td><td class="mono">2,000</td><td class="mono">1,410</td></tr>
+              <tr><td class="mono">12</td><td class="mono">1,450</td><td class="mono">1,090</td><td class="mono">2,900</td><td class="mono">2,050</td></tr>
+              <tr><td class="mono">14</td><td class="mono">1,950</td><td class="mono">1,460</td><td class="mono">3,900</td><td class="mono">2,760</td></tr>
+              <tr><td class="mono">16</td><td class="mono">2,550</td><td class="mono">1,910</td><td class="mono">5,100</td><td class="mono">3,610</td></tr>
+              <tr><td class="mono">18</td><td class="mono">3,200</td><td class="mono">2,400</td><td class="mono">6,400</td><td class="mono">4,530</td></tr>
+              <tr><td class="mono">20</td><td class="mono">3,950</td><td class="mono">2,960</td><td class="mono">7,900</td><td class="mono">5,590</td></tr>
+              <tr><td class="mono">22</td><td class="mono">4,800</td><td class="mono">3,600</td><td class="mono">9,600</td><td class="mono">6,790</td></tr>
+              <tr><td class="mono">24</td><td class="mono">5,700</td><td class="mono">4,280</td><td class="mono">11,400</td><td class="mono">8,060</td></tr>
+              <tr><td class="mono">28</td><td class="mono">7,700</td><td class="mono">5,780</td><td class="mono">15,400</td><td class="mono">10,900</td></tr>
+              <tr><td class="mono">32</td><td class="mono">10,100</td><td class="mono">7,580</td><td class="mono">20,200</td><td class="mono">14,280</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-link" aria-hidden="true"></i> Chain sling WLL (Grade 80)</div>
+        <span class="header-badge">4:1 SF</span>
+      </div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Chain dia (mm)</th><th>1-leg vertical (kg)</th><th>2-leg 0–45° (kg)</th><th>2-leg 45–60° (kg)</th><th>4-leg 0–45° (kg)</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">6</td><td class="mono">1,120</td><td class="mono">1,600</td><td class="mono">1,120</td><td class="mono">2,360</td></tr>
+              <tr><td class="mono">7</td><td class="mono">1,500</td><td class="mono">2,120</td><td class="mono">1,500</td><td class="mono">3,150</td></tr>
+              <tr><td class="mono">8</td><td class="mono">2,000</td><td class="mono">2,800</td><td class="mono">2,000</td><td class="mono">4,000</td></tr>
+              <tr><td class="mono">10</td><td class="mono">3,150</td><td class="mono">4,500</td><td class="mono">3,150</td><td class="mono">6,300</td></tr>
+              <tr><td class="mono">13</td><td class="mono">5,300</td><td class="mono">7,500</td><td class="mono">5,300</td><td class="mono">10,600</td></tr>
+              <tr><td class="mono">16</td><td class="mono">8,000</td><td class="mono">11,200</td><td class="mono">8,000</td><td class="mono">16,000</td></tr>
+              <tr><td class="mono">20</td><td class="mono">12,500</td><td class="mono">17,500</td><td class="mono">12,500</td><td class="mono">25,000</td></tr>
+              <tr><td class="mono">22</td><td class="mono">15,000</td><td class="mono">21,200</td><td class="mono">15,000</td><td class="mono">31,500</td></tr>
+              <tr><td class="mono">26</td><td class="mono">21,200</td><td class="mono">30,000</td><td class="mono">21,200</td><td class="mono">42,400</td></tr>
+              <tr><td class="mono">32</td><td class="mono">31,500</td><td class="mono">44,500</td><td class="mono">31,500</td><td class="mono">63,000</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-hook" aria-hidden="true"></i> Bow shackle WLL (Grade S)</div>
+      </div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Pin dia (mm)</th><th>WLL (tonnes)</th><th>Body dia (mm)</th><th>Proof load (kN)</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">11</td><td class="mono">0.75</td><td class="mono">10</td><td class="mono">15</td></tr>
+              <tr><td class="mono">13</td><td class="mono">1.0</td><td class="mono">11</td><td class="mono">20</td></tr>
+              <tr><td class="mono">16</td><td class="mono">1.5</td><td class="mono">13</td><td class="mono">30</td></tr>
+              <tr><td class="mono">19</td><td class="mono">2.0</td><td class="mono">16</td><td class="mono">40</td></tr>
+              <tr><td class="mono">22</td><td class="mono">3.25</td><td class="mono">19</td><td class="mono">65</td></tr>
+              <tr><td class="mono">25</td><td class="mono">4.75</td><td class="mono">22</td><td class="mono">95</td></tr>
+              <tr><td class="mono">29</td><td class="mono">6.5</td><td class="mono">25</td><td class="mono">130</td></tr>
+              <tr><td class="mono">32</td><td class="mono">8.5</td><td class="mono">29</td><td class="mono">170</td></tr>
+              <tr><td class="mono">35</td><td class="mono">9.5</td><td class="mono">32</td><td class="mono">190</td></tr>
+              <tr><td class="mono">38</td><td class="mono">12.0</td><td class="mono">35</td><td class="mono">240</td></tr>
+              <tr><td class="mono">44</td><td class="mono">17.0</td><td class="mono">41</td><td class="mono">340</td></tr>
+              <tr><td class="mono">51</td><td class="mono">25.0</td><td class="mono">48</td><td class="mono">500</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- TAB 4: LIFT PLAN                                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-liftplan">
+
+    <!-- Restore from backup banner (shown only when no plans exist) -->
+    <div id="restore-banner" style="display:none; margin-bottom:12px;">
+      <div class="card" style="border-color:var(--accent-border); background:var(--accent-dim);">
+        <div class="card-body" style="padding:14px 16px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <i class="ti ti-file-import" style="font-size:22px; color:var(--accent);"></i>
+              <div>
+                <div style="font-size:13px; font-weight:600; color:var(--text);">No saved plans found</div>
+                <div style="font-size:11px; color:var(--text2); margin-top:2px;">Restore from a previous backup file?</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <label class="btn primary" style="cursor:pointer; position:relative;">
+                <i class="ti ti-upload"></i> Restore backup
+                <input type="file" accept=".json" onchange="restoreFromBackup(event)" style="position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;">
+              </label>
+              <button class="btn" onclick="dismissRestoreBanner()"><i class="ti ti-x"></i> Dismiss</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Saved plans bar -->
+    <div class="card" style="margin-bottom:12px;" id="saved-plans-bar">
+      <div class="card-body" style="padding:12px 16px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; flex:1;">
+            <div class="form-group" style="margin:0; flex:1; min-width:180px;">
+              <select id="lp-saved-list" onchange="loadSelectedPlan()" style="padding:8px 10px;">
+                <option value="">— New lift plan —</option>
+              </select>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="btn" onclick="saveLiftPlan()" id="btn-save-plan"><i class="ti ti-device-floppy" aria-hidden="true"></i> Save</button>
+              <button class="btn" onclick="saveLiftPlanAs()"><i class="ti ti-file-plus" aria-hidden="true"></i> Save as…</button>
+              <button class="btn" onclick="newLiftPlan()"><i class="ti ti-file-description" aria-hidden="true"></i> New</button>
+              <button class="btn" onclick="deleteLiftPlan()" id="btn-delete-plan" style="color:var(--red); border-color:rgba(224,90,90,0.3);"><i class="ti ti-trash" aria-hidden="true"></i> Delete</button>
+            </div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn" onclick="exportLiftPlanJSON()"><i class="ti ti-download" aria-hidden="true"></i> Export</button>
+            <button class="btn" onclick="document.getElementById('lp-import-file').click()"><i class="ti ti-upload" aria-hidden="true"></i> Import</button>
+            <input type="file" id="lp-import-file" accept=".json" style="display:none;" onchange="importLiftPlanJSON(event)">
+            <button class="btn primary" onclick="window.print()"><i class="ti ti-printer" aria-hidden="true"></i> Print</button>
+          </div>
+        </div>
+        <div id="lp-save-status" style="font-size:11px; color:var(--text3); margin-top:6px; display:none;">
+          <i class="ti ti-circle-check" style="color:var(--green); vertical-align:-1px;" aria-hidden="true"></i>
+          <span id="lp-save-status-text"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-clipboard-check" aria-hidden="true"></i> Lift plan <span id="lp-current-name" style="font-weight:400; color:var(--text2); font-size:13px; margin-left:6px;"></span></div>
+      </div>
+      <div class="card-body">
+
+        <div class="lift-plan-section">
+          <div class="section-title"><i class="ti ti-info-circle" aria-hidden="true"></i> General information</div>
+          <div class="form-grid">
+            <div class="form-group"><label for="lp-project" class="form-label">Project / Site</label><input id="lp-project" type="text" placeholder="e.g. Siemens Energy — Newcastle"></div>
+            <div class="form-group"><label for="lp-date" class="form-label">Date of lift</label><input id="lp-date" type="date"></div>
+            <div class="form-group"><label for="lp-ref" class="form-label">Lift plan ref</label><input id="lp-ref" type="text" placeholder="e.g. LP-2025-001"></div>
+            <div class="form-group"><label for="lp-supervisor" class="form-label">Lift supervisor</label><input id="lp-supervisor" type="text" placeholder="Full name"></div>
+            <div class="form-group"><label for="lp-rigger" class="form-label">Rigger(s)</label><input id="lp-rigger" type="text" placeholder="Names of riggers"></div>
+            <div class="form-group"><label for="lp-dogman" class="form-label">Dogman</label><input id="lp-dogman" type="text" placeholder="Dogman name"></div>
+            <div class="form-group"><label for="lp-operator" class="form-label">Crane operator</label><input id="lp-operator" type="text" placeholder="Operator name"></div>
+            <div class="form-group"><label for="lp-type" class="form-label">Lift classification</label>
+              <select id="lp-type">
+                <option>Standard lift</option>
+                <option>Critical lift (≥80% capacity)</option>
+                <option>Tandem / dual crane lift</option>
+                <option>Personnel lift</option>
+                <option>Engineered lift</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="lift-plan-section">
+          <div class="section-title"><i class="ti ti-package" aria-hidden="true"></i> Load details</div>
+          <div class="form-grid">
+            <div class="form-group"><label for="lp-load-desc" class="form-label">Load description</label><input id="lp-load-desc" type="text" placeholder="e.g. Gas turbine rotor assembly"></div>
+            <div class="form-group"><label for="lp-load-weight" class="form-label">Load weight (kg)</label><input id="lp-load-weight" type="number" min="0" placeholder="0"></div>
+            <div class="form-group"><label for="lp-load-dims" class="form-label">Load dimensions (L × W × H)</label><input id="lp-load-dims" type="text" placeholder="e.g. 4.2m × 1.8m × 2.1m"></div>
+            <div class="form-group"><label for="lp-cog" class="form-label">Centre of gravity</label><input id="lp-cog" type="text" placeholder="e.g. Centre / Offset 200mm left"></div>
+            <div class="form-group" style="grid-column:span 2;"><label for="lp-rigging-config" class="form-label">Rigging configuration</label><textarea id="lp-rigging-config" placeholder="e.g. 4-leg wire rope sling, 20mm × 3m, vertical hitch to lifting lugs. 2× 4.75t bow shackles."></textarea></div>
+          </div>
+        </div>
+
+        <div class="lift-plan-section">
+          <div class="section-title"><i class="ti ti-crane" aria-hidden="true"></i> Crane details</div>
+          <div class="form-grid">
+            <div class="form-group"><label for="lp-crane-type" class="form-label">Crane type / model</label><input id="lp-crane-type" type="text" placeholder="e.g. Liebherr LTM 1100-4.2"></div>
+            <div class="form-group"><label for="lp-crane-cap" class="form-label">Crane SWL at radius (kg)</label><input id="lp-crane-cap" type="number" min="0" placeholder="0" oninput="calcLiftUtilisation()"></div>
+            <div class="form-group"><label for="lp-radius" class="form-label">Working radius (m)</label><input id="lp-radius" type="number" min="0" step="0.1" placeholder="0"></div>
+            <div class="form-group"><label for="lp-boom" class="form-label">Boom length (m)</label><input id="lp-boom" type="number" min="0" step="0.1" placeholder="0"></div>
+          </div>
+          <div id="lp-utilisation" style="margin-top:12px;"></div>
+        </div>
+
+        <div class="lift-plan-section">
+          <div class="section-title"><i class="ti ti-shield-check" aria-hidden="true"></i> Risk assessment</div>
+          <div class="form-grid">
+            <div class="form-group" style="grid-column:span 2;"><label for="lp-hazards" class="form-label">Identified hazards</label><textarea id="lp-hazards" placeholder="e.g. Overhead power lines within 10m, uneven ground, wind exposure, pedestrian traffic…"></textarea></div>
+            <div class="form-group" style="grid-column:span 2;"><label for="lp-controls" class="form-label">Control measures</label><textarea id="lp-controls" placeholder="e.g. Exclusion zone established, spotter assigned, wind limit 35km/h, outrigger pads on mats…"></textarea></div>
+            <div class="form-group"><label for="lp-wind" class="form-label">Max wind speed (km/h)</label><input id="lp-wind" type="number" min="0" value="35"></div>
+            <div class="form-group"><label for="lp-ground" class="form-label">Ground conditions</label>
+              <select id="lp-ground">
+                <option>Firm / compacted</option>
+                <option>Paved / concrete</option>
+                <option>Soft / muddy</option>
+                <option>Gravel</option>
+                <option>Sloped</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="lift-plan-section">
+          <div class="section-title"><i class="ti ti-checkbox" aria-hidden="true"></i> Pre-lift checklist</div>
+          <div id="checklist"></div>
+        </div>
+
+        <div class="lift-plan-section">
+          <div class="section-title"><i class="ti ti-camera" aria-hidden="true"></i> Lift photos &amp; documentation</div>
+          <div style="font-size:12px; color:var(--text3); margin-bottom:12px;">
+            Upload photos of the rigging setup, load, crane position, exclusion zones, and completed lift. Each photo can be tagged and captioned for the lift record.
+          </div>
+          <div class="photo-grid" id="photo-grid">
+            <button class="photo-upload-btn" id="photo-upload-btn" aria-label="Add lift photo">
+              <input type="file" id="photo-file-input" accept="image/*" multiple onchange="handlePhotoUpload(event)" aria-label="Choose photos">
+              <i class="ti ti-camera-plus" aria-hidden="true"></i>
+              <span>Add photos</span>
+              <span style="font-size:10px; color:var(--text3);">JPG, PNG · Multiple allowed</span>
+            </button>
+          </div>
+          <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;" id="photo-actions" hidden>
+            <button class="btn" onclick="captureFromCamera()"><i class="ti ti-device-mobile-camera" aria-hidden="true"></i> Camera</button>
+            <button class="btn" onclick="clearAllPhotos()"><i class="ti ti-trash" aria-hidden="true"></i> Clear all</button>
+            <span style="font-size:11px; color:var(--text3); align-self:center;" id="photo-count-label"></span>
+          </div>
+        </div>
+
+        <div class="lift-plan-section">
+          <div class="section-title"><i class="ti ti-pencil" aria-hidden="true"></i> Sign-off</div>
+          <div class="form-grid">
+            <div class="form-group"><label for="lp-signoff-name" class="form-label">Approved by</label><input id="lp-signoff-name" type="text" placeholder="Name and position"></div>
+            <div class="form-group"><label for="lp-signoff-date" class="form-label">Date</label><input id="lp-signoff-date" type="date"></div>
+            <div class="form-group" style="grid-column:span 2;"><label for="lp-notes" class="form-label">Additional notes</label><textarea id="lp-notes" placeholder="Any additional information, special instructions, or comments…"></textarea></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+<!-- Lightbox -->
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close"><i class="ti ti-x" aria-hidden="true"></i></button>
+  <button class="lightbox-nav prev" onclick="event.stopPropagation(); navLightbox(-1)" aria-label="Previous photo"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
+  <button class="lightbox-nav next" onclick="event.stopPropagation(); navLightbox(1)" aria-label="Next photo"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
+  <img id="lightbox-img" src="" alt="Lift photo">
+  <div class="lightbox-caption" id="lightbox-caption"></div>
+</div>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════════════════════════════════
+
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// SLING SELECTOR — "What WLL do I need?"
+// ══════════════════════════════════════════════════════════════════════════
+
+let selLegs = 2;
+let selHitch = 'vertical';
+
+const HITCH_FACTORS = { vertical: 1.0, choker: 0.75, basket: 2.0 };
+
+function setSelLegs(n, btn) {
+  selLegs = n;
+  document.querySelectorAll('#sel-legs .toggle-option').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  calcSelector();
+}
+
+function setSelHitch(h, btn) {
+  selHitch = h;
+  document.querySelectorAll('#sel-hitch .toggle-option').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  calcSelector();
+}
+
+const WIRE_ROPE_TABLE = [
+  { dia: 8,  vertical: 640,   choker: 480,   basket: 1280  },
+  { dia: 10, vertical: 1000,  choker: 750,   basket: 2000  },
+  { dia: 12, vertical: 1450,  choker: 1090,  basket: 2900  },
+  { dia: 14, vertical: 1950,  choker: 1460,  basket: 3900  },
+  { dia: 16, vertical: 2550,  choker: 1910,  basket: 5100  },
+  { dia: 18, vertical: 3200,  choker: 2400,  basket: 6400  },
+  { dia: 20, vertical: 3950,  choker: 2960,  basket: 7900  },
+  { dia: 22, vertical: 4800,  choker: 3600,  basket: 9600  },
+  { dia: 24, vertical: 5700,  choker: 4280,  basket: 11400 },
+  { dia: 28, vertical: 7700,  choker: 5780,  basket: 15400 },
+  { dia: 32, vertical: 10100, choker: 7580,  basket: 20200 },
+];
+
+const CHAIN_TABLE = [
+  { dia: 6,  vertical: 1120  },
+  { dia: 7,  vertical: 1500  },
+  { dia: 8,  vertical: 2000  },
+  { dia: 10, vertical: 3150  },
+  { dia: 13, vertical: 5300  },
+  { dia: 16, vertical: 8000  },
+  { dia: 20, vertical: 12500 },
+  { dia: 22, vertical: 15000 },
+  { dia: 26, vertical: 21200 },
+  { dia: 32, vertical: 31500 },
+];
+
+const WEBBING_TABLE = [
+  { width: 25,  colour: "Purple", vertical: 1000  },
+  { width: 30,  colour: "Green",  vertical: 2000  },
+  { width: 60,  colour: "Yellow", vertical: 3000  },
+  { width: 75,  colour: "Grey",   vertical: 4000  },
+  { width: 90,  colour: "Red",    vertical: 5000  },
+  { width: 120, colour: "Brown",  vertical: 6000  },
+  { width: 150, colour: "Blue",   vertical: 8000  },
+  { width: 180, colour: "Orange", vertical: 10000 },
+  { width: 240, colour: "Orange", vertical: 12000 },
+];
+
+function calcSelector() {
+  const load = parseFloat(document.getElementById('sel-load').value) || 0;
+  const angle = parseFloat(document.getElementById('sel-angle').value) || 0;
+  const sf = parseFloat(document.getElementById('sel-sf').value) || 5;
+  const contingency = parseFloat(document.getElementById('sel-contingency').value) || 1.1;
+
+  const angleRad = angle * Math.PI / 180;
+  const cosA = Math.cos(angleRad);
+  const hitchFactor = HITCH_FACTORS[selHitch] || 1.0;
+  const effectiveLegs = selLegs <= 2 ? selLegs : 2;
+  const designLoad = load * contingency;
+  const tensionPerLeg = (cosA > 0.001) ? designLoad / (effectiveLegs * cosA * hitchFactor) : Infinity;
+  const requiredWLL = tensionPerLeg;
+  const requiredMBF = requiredWLL * sf;
+
+  if (load <= 0 || tensionPerLeg === Infinity) {
+    document.getElementById('selector-results').innerHTML = '';
+    return;
+  }
+
+  const wireMatches = WIRE_ROPE_TABLE.filter(r => r.vertical >= requiredWLL);
+  const wireRecommended = wireMatches.length ? wireMatches[0] : null;
+  const chainMatches = CHAIN_TABLE.filter(r => r.vertical >= requiredWLL);
+  const chainRecommended = chainMatches.length ? chainMatches[0] : null;
+  const webbingMatches = WEBBING_TABLE.filter(r => r.vertical >= requiredWLL);
+  const webbingRecommended = webbingMatches.length ? webbingMatches[0] : null;
+  const angleStatus = angle > 60 ? 'danger' : angle > 45 ? 'warn' : 'safe';
+
+  document.getElementById('selector-results').innerHTML = `
+    <div class="result-grid" style="margin-bottom:16px;">
+      <div class="result-box highlight">
+        <div class="result-lbl">Min. WLL per leg</div>
+        <div class="result-val">${Math.ceil(requiredWLL).toLocaleString()} kg</div>
+        <div class="result-sub">${selLegs}-leg ${selHitch} · ${angle}°</div>
+      </div>
+      <div class="result-box">
+        <div class="result-lbl">Design load</div>
+        <div class="result-val">${Math.round(designLoad).toLocaleString()} kg</div>
+        <div class="result-sub">+${Math.round((contingency-1)*100)}% contingency</div>
+      </div>
+      <div class="result-box">
+        <div class="result-lbl">Tension per leg</div>
+        <div class="result-val">${Math.round(tensionPerLeg).toLocaleString()} kg</div>
+        <div class="result-sub">${effectiveLegs} effective legs</div>
+      </div>
+      <div class="result-box">
+        <div class="result-lbl">Min. breaking force</div>
+        <div class="result-val">${Math.round(requiredMBF).toLocaleString()} kg</div>
+        <div class="result-sub">${sf}:1 safety factor</div>
+      </div>
+    </div>
+
+    <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:10px;padding-bottom:6px;border-bottom:0.5px solid var(--border);">
+      <i class="ti ti-checklist" style="vertical-align:-2px;margin-right:4px;" aria-hidden="true"></i>
+      Recommended slings — WLL ≥ ${Math.ceil(requiredWLL).toLocaleString()} kg
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;">
+      ${wireRecommended ? `
+      <div class="result-box safe" style="padding:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div class="result-lbl" style="margin:0;">Wire rope (6×36 IWRC)</div>
+          <span style="font-size:9px;padding:2px 6px;border-radius:3px;background:var(--green-dim);color:var(--green);font-weight:600;">RECOMMENDED</span>
+        </div>
+        <div class="result-val">${wireRecommended.dia}mm diameter</div>
+        <div class="result-sub" style="margin-top:6px;">
+          WLL: <strong style="color:var(--text);">${wireRecommended.vertical.toLocaleString()} kg</strong> vertical<br>
+          Choker: ${wireRecommended.choker.toLocaleString()} kg · Basket: ${wireRecommended.basket.toLocaleString()} kg<br>
+          Utilisation: <strong style="color:${(requiredWLL/wireRecommended.vertical*100)<=80?'var(--green)':'#e6b800'};">${Math.round(requiredWLL/wireRecommended.vertical*100)}%</strong>
+          ${wireMatches.length>1?`<br><span style="color:var(--text3);">Also: ${wireMatches.slice(1,3).map(w=>w.dia+'mm').join(', ')}</span>`:''}
+        </div>
+      </div>` : `
+      <div class="result-box danger" style="padding:14px;">
+        <div class="result-lbl">Wire rope (6×36 IWRC)</div>
+        <div class="result-val" style="font-size:14px;color:var(--red);">Exceeds table</div>
+        <div class="result-sub">Required WLL exceeds 32mm capacity.</div>
+      </div>`}
+
+      ${chainRecommended ? `
+      <div class="result-box" style="padding:14px;border-color:var(--teal-border);background:var(--teal-dim);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div class="result-lbl" style="margin:0;">Chain sling (Grade 80)</div>
+          <span style="font-size:9px;padding:2px 6px;border-radius:3px;background:var(--teal-dim);color:var(--teal);border:0.5px solid var(--teal-border);font-weight:600;">4:1 SF</span>
+        </div>
+        <div class="result-val" style="color:var(--teal);">${chainRecommended.dia}mm chain</div>
+        <div class="result-sub" style="margin-top:6px;">
+          WLL: <strong style="color:var(--text);">${chainRecommended.vertical.toLocaleString()} kg</strong> single leg<br>
+          Utilisation: <strong style="color:${(requiredWLL/chainRecommended.vertical*100)<=80?'var(--green)':'#e6b800'};">${Math.round(requiredWLL/chainRecommended.vertical*100)}%</strong>
+          ${chainMatches.length>1?`<br><span style="color:var(--text3);">Also: ${chainMatches.slice(1,3).map(c=>c.dia+'mm').join(', ')}</span>`:''}
+        </div>
+      </div>` : `
+      <div class="result-box danger" style="padding:14px;">
+        <div class="result-lbl">Chain sling (Grade 80)</div>
+        <div class="result-val" style="font-size:14px;color:var(--red);">Exceeds table</div>
+        <div class="result-sub">Exceeds 32mm G80 capacity.</div>
+      </div>`}
+
+      ${webbingRecommended ? `
+      <div class="result-box" style="padding:14px;border-color:rgba(255,218,0,0.3);background:var(--yellow-dim);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div class="result-lbl" style="margin:0;">Flat webbing (Polyester)</div>
+          <span style="font-size:9px;padding:2px 6px;border-radius:3px;background:var(--yellow-dim);color:#e6b800;border:0.5px solid rgba(255,218,0,0.3);font-weight:600;">7:1 SF</span>
+        </div>
+        <div class="result-val" style="color:#e6b800;">${webbingRecommended.width}mm ${webbingRecommended.colour}</div>
+        <div class="result-sub" style="margin-top:6px;">
+          WLL: <strong style="color:var(--text);">${webbingRecommended.vertical.toLocaleString()} kg</strong> vertical<br>
+          Colour code: <strong style="color:var(--text);">${webbingRecommended.colour}</strong><br>
+          Utilisation: <strong style="color:${(requiredWLL/webbingRecommended.vertical*100)<=80?'var(--green)':'#e6b800'};">${Math.round(requiredWLL/webbingRecommended.vertical*100)}%</strong>
+        </div>
+      </div>` : `
+      <div class="result-box danger" style="padding:14px;">
+        <div class="result-lbl">Flat webbing (Polyester)</div>
+        <div class="result-val" style="font-size:14px;color:var(--red);">Exceeds table</div>
+        <div class="result-sub">Exceeds 240mm capacity.</div>
+      </div>`}
+    </div>
+
+    ${angleStatus !== 'safe' ? `
+    <div class="status-bar ${angleStatus==='danger'?'fail':'warn'}" style="margin-top:14px;">
+      <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+      ${angle>60?'Sling angle exceeds 60° — not recommended.':'Sling angle exceeds 45° — consider longer slings.'}
+    </div>` : `
+    <div class="status-bar pass" style="margin-top:14px;">
+      <i class="ti ti-circle-check" aria-hidden="true"></i>
+      OK — ${selLegs}-leg ${selHitch} hitch at ${angle}° with +${Math.round((contingency-1)*100)}% contingency. Verify certification before use.
+    </div>`}
+  `;
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// WEIGHT ESTIMATOR
+// ══════════════════════════════════════════════════════════════════════════
+
+function getDensity() {
+  const sel = document.getElementById('w-material');
+  if (sel.value === 'custom') {
+    document.getElementById('w-custom-density-group').style.display = '';
+    return parseFloat(document.getElementById('w-custom-density').value) || 7850;
+  }
+  document.getElementById('w-custom-density-group').style.display = 'none';
+  return parseFloat(sel.value) || 7850;
+}
+
+function calcWeight() {
+  const shape = document.getElementById('w-shape').value;
+  const density = getDensity();
+
+  const dims = document.getElementById('w-dims');
+  let html = '<div class="form-grid">';
+
+  switch (shape) {
+    case 'box':
+      html += `
+        <div class="form-group"><label for="w-l" class="form-label">Length (mm)</label><input id="w-l" type="number" min="0" value="${getVal('w-l',1000)}" oninput="calcWeightResult()"></div>
+        <div class="form-group"><label for="w-w" class="form-label">Width (mm)</label><input id="w-w" type="number" min="0" value="${getVal('w-w',500)}" oninput="calcWeightResult()"></div>
+        <div class="form-group"><label for="w-h" class="form-label">Height (mm)</label><input id="w-h" type="number" min="0" value="${getVal('w-h',300)}" oninput="calcWeightResult()"></div>`;
+      break;
+    case 'cylinder':
+      html += `
+        <div class="form-group"><label for="w-d" class="form-label">Diameter (mm)</label><input id="w-d" type="number" min="0" value="${getVal('w-d',500)}" oninput="calcWeightResult()"></div>
+        <div class="form-group"><label for="w-l" class="form-label">Length (mm)</label><input id="w-l" type="number" min="0" value="${getVal('w-l',2000)}" oninput="calcWeightResult()"></div>`;
+      break;
+    case 'pipe':
+      html += `
+        <div class="form-group"><label for="w-od" class="form-label">Outer diameter (mm)</label><input id="w-od" type="number" min="0" value="${getVal('w-od',500)}" oninput="calcWeightResult()"></div>
+        <div class="form-group"><label for="w-id" class="form-label">Inner diameter (mm)</label><input id="w-id" type="number" min="0" value="${getVal('w-id',450)}" oninput="calcWeightResult()"></div>
+        <div class="form-group"><label for="w-l" class="form-label">Length (mm)</label><input id="w-l" type="number" min="0" value="${getVal('w-l',3000)}" oninput="calcWeightResult()"></div>`;
+      break;
+    case 'plate':
+      html += `
+        <div class="form-group"><label for="w-l" class="form-label">Length (mm)</label><input id="w-l" type="number" min="0" value="${getVal('w-l',2000)}" oninput="calcWeightResult()"></div>
+        <div class="form-group"><label for="w-w" class="form-label">Width (mm)</label><input id="w-w" type="number" min="0" value="${getVal('w-w',1000)}" oninput="calcWeightResult()"></div>
+        <div class="form-group"><label for="w-t" class="form-label">Thickness (mm)</label><input id="w-t" type="number" min="0" value="${getVal('w-t',12)}" oninput="calcWeightResult()"></div>`;
+      break;
+    case 'sphere':
+      html += `
+        <div class="form-group"><label for="w-d" class="form-label">Diameter (mm)</label><input id="w-d" type="number" min="0" value="${getVal('w-d',800)}" oninput="calcWeightResult()"></div>`;
+      break;
+    case 'ibeam':
+      html += `
+        <div class="form-group"><label for="w-kg" class="form-label">Beam weight (kg/m)</label><input id="w-kg" type="number" min="0" step="0.1" value="${getVal('w-kg',40.1)}" oninput="calcWeightResult()"></div>
+        <div class="form-group"><label for="w-l" class="form-label">Length (mm)</label><input id="w-l" type="number" min="0" value="${getVal('w-l',6000)}" oninput="calcWeightResult()"></div>`;
+      break;
+  }
+  html += '</div>';
+  dims.innerHTML = html;
+  calcWeightResult();
+}
+
+function getVal(id, def) {
+  const el = document.getElementById(id);
+  return el ? el.value : def;
+}
+
+function calcWeightResult() {
+  const shape = document.getElementById('w-shape').value;
+  const density = getDensity();
+  let volume = 0; // in m³
+  let weight = 0;
+  let formulaText = '';
+
+  switch (shape) {
+    case 'box': {
+      const l = (parseFloat(document.getElementById('w-l')?.value) || 0) / 1000;
+      const w = (parseFloat(document.getElementById('w-w')?.value) || 0) / 1000;
+      const h = (parseFloat(document.getElementById('w-h')?.value) || 0) / 1000;
+      volume = l * w * h;
+      formulaText = `${(l*1000).toFixed(0)} × ${(w*1000).toFixed(0)} × ${(h*1000).toFixed(0)} mm`;
+      break;
+    }
+    case 'cylinder': {
+      const d = (parseFloat(document.getElementById('w-d')?.value) || 0) / 1000;
+      const l = (parseFloat(document.getElementById('w-l')?.value) || 0) / 1000;
+      volume = Math.PI * (d / 2) ** 2 * l;
+      formulaText = `ø${(d*1000).toFixed(0)}mm × ${(l*1000).toFixed(0)}mm long`;
+      break;
+    }
+    case 'pipe': {
+      const od = (parseFloat(document.getElementById('w-od')?.value) || 0) / 1000;
+      const id = (parseFloat(document.getElementById('w-id')?.value) || 0) / 1000;
+      const l = (parseFloat(document.getElementById('w-l')?.value) || 0) / 1000;
+      volume = Math.PI * ((od / 2) ** 2 - (id / 2) ** 2) * l;
+      formulaText = `OD ${(od*1000).toFixed(0)}mm / ID ${(id*1000).toFixed(0)}mm × ${(l*1000).toFixed(0)}mm`;
+      break;
+    }
+    case 'plate': {
+      const l = (parseFloat(document.getElementById('w-l')?.value) || 0) / 1000;
+      const w = (parseFloat(document.getElementById('w-w')?.value) || 0) / 1000;
+      const t = (parseFloat(document.getElementById('w-t')?.value) || 0) / 1000;
+      volume = l * w * t;
+      formulaText = `${(l*1000).toFixed(0)} × ${(w*1000).toFixed(0)} × ${(t*1000).toFixed(0)}mm thick`;
+      break;
+    }
+    case 'sphere': {
+      const d = (parseFloat(document.getElementById('w-d')?.value) || 0) / 1000;
+      volume = (4 / 3) * Math.PI * (d / 2) ** 3;
+      formulaText = `ø${(d*1000).toFixed(0)}mm sphere`;
+      break;
+    }
+    case 'ibeam': {
+      const kgm = parseFloat(document.getElementById('w-kg')?.value) || 0;
+      const l = (parseFloat(document.getElementById('w-l')?.value) || 0) / 1000;
+      weight = kgm * l;
+      formulaText = `${kgm} kg/m × ${(l*1000).toFixed(0)}mm`;
+      break;
+    }
+  }
+
+  if (shape !== 'ibeam') {
+    weight = volume * density;
+  }
+
+  const container = document.getElementById('weight-results');
+  container.innerHTML = `
+    <div class="result-grid">
+      <div class="result-box highlight">
+        <div class="result-lbl">Estimated weight</div>
+        <div class="result-val">${weight < 1000 ? weight.toFixed(1) + ' kg' : (weight / 1000).toFixed(2) + ' t'}</div>
+        <div class="result-sub">${Math.round(weight)} kg · ${formulaText}</div>
+      </div>
+      ${shape !== 'ibeam' ? `<div class="result-box">
+        <div class="result-lbl">Volume</div>
+        <div class="result-val">${volume < 0.01 ? (volume * 1e6).toFixed(0) + ' cm³' : volume.toFixed(4) + ' m³'}</div>
+        <div class="result-sub">@ ${density.toLocaleString()} kg/m³</div>
+      </div>` : ''}
+      <div class="result-box">
+        <div class="result-lbl">Add 10% contingency</div>
+        <div class="result-val">${Math.round(weight * 1.1).toLocaleString()} kg</div>
+        <div class="result-sub">Recommended for lift planning</div>
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// LIFT PLAN — UTILISATION
+// ══════════════════════════════════════════════════════════════════════════
+
+function calcLiftUtilisation() {
+  const loadWeight = parseFloat(document.getElementById('lp-load-weight')?.value) || 0;
+  const craneCap = parseFloat(document.getElementById('lp-crane-cap')?.value) || 0;
+  const container = document.getElementById('lp-utilisation');
+
+  if (!craneCap || !loadWeight) { container.innerHTML = ''; return; }
+
+  const util = (loadWeight / craneCap) * 100;
+  let cls = 'safe';
+  let msg = `${Math.round(util)}% utilisation — within safe limits`;
+  if (util > 100) { cls = 'fail'; msg = `${Math.round(util)}% — EXCEEDS crane capacity`; }
+  else if (util > 80) { cls = 'warn'; msg = `${Math.round(util)}% — Critical lift threshold (>80%)`; }
+  else if (util > 90) { cls = 'fail'; msg = `${Math.round(util)}% — Approaching capacity, review required`; }
+
+  container.innerHTML = `
+    <div class="result-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="result-box ${cls === 'safe' ? 'safe' : cls === 'warn' ? 'warn' : 'danger'}">
+        <div class="result-lbl">Crane utilisation</div>
+        <div class="result-val">${Math.round(util)}%</div>
+        <div class="result-sub">${loadWeight.toLocaleString()} kg of ${craneCap.toLocaleString()} kg capacity</div>
+      </div>
+      <div class="result-box">
+        <div class="result-lbl">Remaining capacity</div>
+        <div class="result-val">${Math.round(craneCap - loadWeight).toLocaleString()} kg</div>
+        <div class="result-sub">at specified radius</div>
+      </div>
+    </div>
+    <div class="status-bar ${cls === 'safe' ? 'pass' : cls}">
+      <i class="ti ti-${cls === 'safe' ? 'circle-check' : cls === 'warn' ? 'alert-triangle' : 'circle-x'}" aria-hidden="true"></i>
+      ${msg}
+    </div>`;
+}
+
+// Also trigger when load weight changes
+document.getElementById('lp-load-weight')?.addEventListener('input', calcLiftUtilisation);
+
+// ══════════════════════════════════════════════════════════════════════════
+// CHECKLIST
+// ══════════════════════════════════════════════════════════════════════════
+
+const CHECKLIST_ITEMS = [
+  "All rigging gear inspected and within certification date",
+  "Load weight confirmed (weigh docket / calculation / nameplate)",
+  "Crane set up on firm level ground with outriggers fully extended",
+  "Crane capacity chart checked for radius, boom length, and configuration",
+  "Exclusion zone established and barricaded",
+  "All personnel briefed on lift procedure and communications",
+  "Tag lines attached and positioned",
+  "Weather conditions checked — wind within limits",
+  "Overhead hazards identified (power lines, structures)",
+  "Emergency stop procedure confirmed with operator",
+  "Trial lift completed — load checked at 100mm",
+  "Centre of gravity and load balance confirmed",
+];
+
+function buildChecklist() {
+  const container = document.getElementById('checklist');
+  container.innerHTML = CHECKLIST_ITEMS.map((item, i) => `
+    <label style="display:flex; align-items:flex-start; gap:10px; padding:8px 0; border-bottom:0.5px solid var(--border); cursor:pointer;">
+      <input type="checkbox" id="chk-${i}" style="width:auto; accent-color:var(--accent); margin-top:3px; flex-shrink:0;">
+      <span style="font-size:13px; color:var(--text);">${item}</span>
+    </label>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// LIFT PHOTOS
+// ══════════════════════════════════════════════════════════════════════════
+
+const PHOTO_TAGS = [
+  "Pre-lift setup",
+  "Rigging configuration",
+  "Sling attachment",
+  "Load / item",
+  "Crane position",
+  "Exclusion zone",
+  "Trial lift",
+  "Lift in progress",
+  "Load at height",
+  "Landing / placement",
+  "Post-lift",
+  "Defect / damage",
+  "Site conditions",
+  "Other",
+];
+
+let liftPhotos = [];
+let lightboxIdx = 0;
+
+function handlePhotoUpload(event) {
+  const files = event.target.files;
+  if (!files || !files.length) return;
+
+  Array.from(files).forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      liftPhotos.push({
+        id: Date.now() + Math.random(),
+        src: e.target.result,
+        caption: '',
+        tag: 'Pre-lift setup',
+        filename: file.name,
+        size: file.size,
+        timestamp: new Date().toLocaleString('en-AU', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }),
+      });
+      renderPhotos();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Reset input so same file can be re-selected
+  event.target.value = '';
+}
+
+function captureFromCamera() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.capture = 'environment';
+  input.onchange = handlePhotoUpload;
+  input.click();
+}
+
+function removePhoto(id) {
+  liftPhotos = liftPhotos.filter(p => p.id !== id);
+  renderPhotos();
+}
+
+function clearAllPhotos() {
+  if (!liftPhotos.length) return;
+  if (!confirm(`Remove all ${liftPhotos.length} photo${liftPhotos.length > 1 ? 's' : ''}?`)) return;
+  liftPhotos = [];
+  renderPhotos();
+}
+
+function updatePhotoCaption(id, caption) {
+  const p = liftPhotos.find(p => p.id === id);
+  if (p) p.caption = caption;
+}
+
+function updatePhotoTag(id, tag) {
+  const p = liftPhotos.find(p => p.id === id);
+  if (p) p.tag = tag;
+}
+
+function renderPhotos() {
+  const grid = document.getElementById('photo-grid');
+  const actions = document.getElementById('photo-actions');
+  const countLabel = document.getElementById('photo-count-label');
+
+  let html = '';
+
+  liftPhotos.forEach((p, idx) => {
+    const sizeKB = Math.round(p.size / 1024);
+    const tagOptions = PHOTO_TAGS.map(t =>
+      `<option value="${t}" ${p.tag === t ? 'selected' : ''}>${t}</option>`
+    ).join('');
+
+    html += `
+      <div class="photo-card" id="photo-${p.id}">
+        <button class="photo-remove" onclick="event.stopPropagation(); removePhoto(${p.id})" aria-label="Remove photo"><i class="ti ti-x" aria-hidden="true"></i></button>
+        <img src="${p.src}" alt="${p.caption || p.tag || 'Lift photo'}" onclick="openLightbox(${idx})" loading="lazy">
+        <div class="photo-card-body">
+          <select class="photo-tag-select" onchange="updatePhotoTag(${p.id}, this.value)" aria-label="Photo tag">${tagOptions}</select>
+          <textarea placeholder="Describe what this photo shows…" oninput="updatePhotoCaption(${p.id}, this.value)" aria-label="Photo description">${p.caption || ''}</textarea>
+          <div class="photo-card-meta">
+            <span class="photo-tag">${p.tag}</span>
+            <span>${p.timestamp} · ${sizeKB}KB</span>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  // Always show upload button at end
+  html += `
+    <button class="photo-upload-btn" aria-label="Add more photos">
+      <input type="file" accept="image/*" multiple onchange="handlePhotoUpload(event)" aria-label="Choose photos">
+      <i class="ti ti-camera-plus" aria-hidden="true"></i>
+      <span>Add photos</span>
+    </button>`;
+
+  grid.innerHTML = html;
+
+  if (liftPhotos.length) {
+    actions.hidden = false;
+    countLabel.textContent = `${liftPhotos.length} photo${liftPhotos.length !== 1 ? 's' : ''} attached`;
+  } else {
+    actions.hidden = true;
+  }
+}
+
+// ── Lightbox ──
+
+function openLightbox(idx) {
+  if (!liftPhotos.length) return;
+  lightboxIdx = idx;
+  const p = liftPhotos[idx];
+  document.getElementById('lightbox-img').src = p.src;
+  document.getElementById('lightbox-img').alt = p.caption || p.tag || 'Lift photo';
+  document.getElementById('lightbox-caption').innerHTML =
+    `<span class="photo-tag" style="margin-right:8px;">${p.tag}</span> ${p.caption || '<em style="color:var(--text3);">No caption</em>'}` +
+    `<div style="font-size:11px; color:var(--text3); margin-top:4px;">${idx + 1} of ${liftPhotos.length} · ${p.filename} · ${p.timestamp}</div>`;
+  document.getElementById('lightbox').classList.add('open');
+  document.addEventListener('keydown', lightboxKeyHandler);
+}
+
+function closeLightbox(event) {
+  if (event && event.target !== event.currentTarget && !event.target.closest('.lightbox-close')) return;
+  document.getElementById('lightbox').classList.remove('open');
+  document.removeEventListener('keydown', lightboxKeyHandler);
+}
+
+function navLightbox(dir) {
+  if (!liftPhotos.length) return;
+  lightboxIdx = (lightboxIdx + dir + liftPhotos.length) % liftPhotos.length;
+  const p = liftPhotos[lightboxIdx];
+  document.getElementById('lightbox-img').src = p.src;
+  document.getElementById('lightbox-img').alt = p.caption || p.tag || 'Lift photo';
+  document.getElementById('lightbox-caption').innerHTML =
+    `<span class="photo-tag" style="margin-right:8px;">${p.tag}</span> ${p.caption || '<em style="color:var(--text3);">No caption</em>'}` +
+    `<div style="font-size:11px; color:var(--text3); margin-top:4px;">${lightboxIdx + 1} of ${liftPhotos.length} · ${p.filename} · ${p.timestamp}</div>`;
+}
+
+function lightboxKeyHandler(e) {
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') navLightbox(-1);
+  if (e.key === 'ArrowRight') navLightbox(1);
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// LIFT PLAN — SAVE / LOAD / EXPORT / IMPORT
+// ══════════════════════════════════════════════════════════════════════════
+
+const LP_STORAGE_KEY = 'rigging_lift_plans';
+const LP_CURRENT_KEY = 'rigging_current_plan';
+let currentPlanId = null;
+let autoSaveTimer = null;
+
+// All lift plan field IDs
+const LP_TEXT_FIELDS = [
+  'lp-project', 'lp-date', 'lp-ref', 'lp-supervisor', 'lp-rigger', 'lp-dogman',
+  'lp-operator', 'lp-type', 'lp-load-desc', 'lp-load-weight', 'lp-load-dims',
+  'lp-cog', 'lp-rigging-config', 'lp-crane-type', 'lp-crane-cap', 'lp-radius',
+  'lp-boom', 'lp-hazards', 'lp-controls', 'lp-wind', 'lp-ground',
+  'lp-signoff-name', 'lp-signoff-date', 'lp-notes'
+];
+
+function gatherLiftPlanData() {
+  const data = {};
+  LP_TEXT_FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) data[id] = el.value;
+  });
+  // Checklist state
+  data.checklist = CHECKLIST_ITEMS.map((_, i) => {
+    const cb = document.getElementById('chk-' + i);
+    return cb ? cb.checked : false;
+  });
+  // Photos (store without base64 src if too large — just metadata)
+  data.photos = liftPhotos.map(p => ({
+    id: p.id,
+    src: p.src, // base64 — may be large
+    caption: p.caption,
+    tag: p.tag,
+    filename: p.filename,
+    size: p.size,
+    timestamp: p.timestamp,
+  }));
+  return data;
+}
+
+function applyLiftPlanData(data) {
+  if (!data) return;
+  LP_TEXT_FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && data[id] !== undefined) el.value = data[id];
+  });
+  // Checklist
+  if (data.checklist) {
+    data.checklist.forEach((checked, i) => {
+      const cb = document.getElementById('chk-' + i);
+      if (cb) cb.checked = checked;
+    });
+  }
+  // Photos
+  if (data.photos) {
+    liftPhotos = data.photos;
+    renderPhotos();
+  }
+  // Trigger utilisation calc
+  calcLiftUtilisation();
+}
+
+function clearLiftPlanForm() {
+  LP_TEXT_FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.tagName === 'SELECT') el.selectedIndex = 0;
+    else if (el.type === 'date') el.value = new Date().toISOString().split('T')[0];
+    else if (el.type === 'number') el.value = '';
+    else el.value = '';
+  });
+  CHECKLIST_ITEMS.forEach((_, i) => {
+    const cb = document.getElementById('chk-' + i);
+    if (cb) cb.checked = false;
+  });
+  liftPhotos = [];
+  renderPhotos();
+  document.getElementById('lp-utilisation').innerHTML = '';
+}
+
+function getSavedPlans() {
+  try {
+    return JSON.parse(localStorage.getItem(LP_STORAGE_KEY) || '{}');
+  } catch (e) { return {}; }
+}
+
+function setSavedPlans(plans) {
+  try {
+    localStorage.setItem(LP_STORAGE_KEY, JSON.stringify(plans));
+  } catch (e) {
+    // Storage quota exceeded — likely due to photos
+    alert('Storage limit reached. Try removing some photos before saving, or use Export to save as a JSON file.');
+  }
+}
+
+function refreshPlansList() {
+  const sel = document.getElementById('lp-saved-list');
+  const plans = getSavedPlans();
+  const keys = Object.keys(plans).sort((a, b) => (plans[b].savedAt || 0) - (plans[a].savedAt || 0));
+
+  sel.innerHTML = '<option value="">— New lift plan —</option>';
+  keys.forEach(key => {
+    const p = plans[key];
+    const label = p.name || key;
+    const date = p.savedAt ? new Date(p.savedAt).toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+    const opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = `${label}${date ? ' — ' + date : ''}`;
+    if (key === currentPlanId) opt.selected = true;
+    sel.appendChild(opt);
+  });
+
+  // Update UI state
+  const nameEl = document.getElementById('lp-current-name');
+  if (currentPlanId && plans[currentPlanId]) {
+    nameEl.textContent = '— ' + (plans[currentPlanId].name || currentPlanId);
+  } else {
+    nameEl.textContent = '';
+  }
+
+  document.getElementById('btn-delete-plan').style.display = currentPlanId ? '' : 'none';
+}
+
+function generatePlanId() {
+  return 'LP-' + Date.now().toString(36).toUpperCase();
+}
+
+function saveLiftPlan() {
+  const plans = getSavedPlans();
+
+  if (!currentPlanId) {
+    // First save — prompt for a name
+    saveLiftPlanAs();
+    return;
+  }
+
+  const data = gatherLiftPlanData();
+  plans[currentPlanId] = {
+    ...plans[currentPlanId],
+    data,
+    savedAt: Date.now(),
+  };
+  setSavedPlans(plans);
+  refreshPlansList();
+  showSaveStatus('Saved');
+  localStorage.setItem(LP_CURRENT_KEY, currentPlanId);
+}
+
+function saveLiftPlanAs() {
+  const refField = document.getElementById('lp-ref').value.trim();
+  const projectField = document.getElementById('lp-project').value.trim();
+  const defaultName = refField || projectField || ('Lift Plan ' + new Date().toLocaleDateString('en-AU'));
+
+  const name = prompt('Save lift plan as:', defaultName);
+  if (!name) return;
+
+  const plans = getSavedPlans();
+  const id = generatePlanId();
+  const data = gatherLiftPlanData();
+
+  plans[id] = { name, data, savedAt: Date.now(), createdAt: Date.now() };
+  currentPlanId = id;
+  setSavedPlans(plans);
+  refreshPlansList();
+  showSaveStatus('Saved as "' + name + '"');
+  localStorage.setItem(LP_CURRENT_KEY, currentPlanId);
+}
+
+function loadSelectedPlan() {
+  const sel = document.getElementById('lp-saved-list');
+  const id = sel.value;
+
+  if (!id) {
+    // "New lift plan" selected
+    currentPlanId = null;
+    clearLiftPlanForm();
+    // Set today's date
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('lp-date').value = today;
+    document.getElementById('lp-signoff-date').value = today;
+    refreshPlansList();
+    localStorage.removeItem(LP_CURRENT_KEY);
+    return;
+  }
+
+  const plans = getSavedPlans();
+  if (!plans[id]) return;
+
+  currentPlanId = id;
+  applyLiftPlanData(plans[id].data);
+  refreshPlansList();
+  showSaveStatus('Loaded "' + (plans[id].name || id) + '"');
+  localStorage.setItem(LP_CURRENT_KEY, currentPlanId);
+}
+
+function newLiftPlan() {
+  // Auto-save current plan if it has a name
+  if (currentPlanId) {
+    const plans = getSavedPlans();
+    if (plans[currentPlanId]) {
+      plans[currentPlanId].data = gatherLiftPlanData();
+      plans[currentPlanId].savedAt = Date.now();
+      setSavedPlans(plans);
+    }
+  }
+
+  currentPlanId = null;
+  clearLiftPlanForm();
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('lp-date').value = today;
+  document.getElementById('lp-signoff-date').value = today;
+  document.getElementById('lp-saved-list').value = '';
+  refreshPlansList();
+  localStorage.removeItem(LP_CURRENT_KEY);
+  showSaveStatus('New plan created');
+}
+
+function deleteLiftPlan() {
+  if (!currentPlanId) return;
+  const plans = getSavedPlans();
+  const name = plans[currentPlanId]?.name || currentPlanId;
+
+  if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
+
+  delete plans[currentPlanId];
+  setSavedPlans(plans);
+  currentPlanId = null;
+  clearLiftPlanForm();
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('lp-date').value = today;
+  document.getElementById('lp-signoff-date').value = today;
+  refreshPlansList();
+  localStorage.removeItem(LP_CURRENT_KEY);
+  showSaveStatus('Plan deleted');
+}
+
+function exportLiftPlanJSON() {
+  const data = gatherLiftPlanData();
+  const plans = getSavedPlans();
+  const name = currentPlanId && plans[currentPlanId] ? plans[currentPlanId].name : 'Lift Plan';
+
+  const exportObj = {
+    type: 'rigging-lift-plan',
+    version: 1,
+    name,
+    exportedAt: new Date().toISOString(),
+    data,
+  };
+
+  const json = JSON.stringify(exportObj, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const safeName = (name || 'lift-plan').replace(/[^a-zA-Z0-9_-]/g, '_');
+  a.href = url;
+  a.download = safeName + '_' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showSaveStatus('Exported as JSON');
+}
+
+function importLiftPlanJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const obj = JSON.parse(e.target.result);
+      if (!obj.data) throw new Error('Invalid format');
+
+      // Auto-save current if needed
+      if (currentPlanId) {
+        const plans = getSavedPlans();
+        if (plans[currentPlanId]) {
+          plans[currentPlanId].data = gatherLiftPlanData();
+          plans[currentPlanId].savedAt = Date.now();
+          setSavedPlans(plans);
+        }
+      }
+
+      // Apply imported data
+      applyLiftPlanData(obj.data);
+
+      // Save as new plan
+      const plans = getSavedPlans();
+      const id = generatePlanId();
+      const name = obj.name || file.name.replace(/\.json$/i, '');
+      plans[id] = { name: name + ' (imported)', data: obj.data, savedAt: Date.now(), createdAt: Date.now() };
+      currentPlanId = id;
+      setSavedPlans(plans);
+      refreshPlansList();
+      showSaveStatus('Imported "' + name + '"');
+      localStorage.setItem(LP_CURRENT_KEY, currentPlanId);
+    } catch (err) {
+      alert('Could not import this file. Make sure it is a valid lift plan JSON export.');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function showSaveStatus(msg) {
+  const el = document.getElementById('lp-save-status');
+  const text = document.getElementById('lp-save-status-text');
+  text.textContent = msg + ' — ' + new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
+  el.style.display = 'block';
+  clearTimeout(el._hideTimer);
+  el._hideTimer = setTimeout(() => { el.style.display = 'none'; }, 8000);
+}
+
+// Auto-save on field changes (debounced)
+function scheduleAutoSave() {
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => {
+    if (!currentPlanId) return;
+    const plans = getSavedPlans();
+    if (!plans[currentPlanId]) return;
+    plans[currentPlanId].data = gatherLiftPlanData();
+    plans[currentPlanId].savedAt = Date.now();
+    setSavedPlans(plans);
+    showSaveStatus('Auto-saved');
+  }, 3000);
+}
+
+// Attach auto-save listeners to all lift plan fields
+function initAutoSave() {
+  LP_TEXT_FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', scheduleAutoSave);
+      el.addEventListener('change', scheduleAutoSave);
+    }
+  });
+  // Checklist checkboxes
+  CHECKLIST_ITEMS.forEach((_, i) => {
+    const cb = document.getElementById('chk-' + i);
+    if (cb) cb.addEventListener('change', scheduleAutoSave);
+  });
+}
+
+// Restore last session
+function restoreLiftPlanSession() {
+  const lastId = localStorage.getItem(LP_CURRENT_KEY);
+  if (lastId) {
+    const plans = getSavedPlans();
+    if (plans[lastId]) {
+      currentPlanId = lastId;
+      applyLiftPlanData(plans[lastId].data);
+    }
+  }
+  refreshPlansList();
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// AUTO-BACKUP ON CLOSE
+// ══════════════════════════════════════════════════════════════════════════
+
+function backupAllPlans() {
+  const plans = getSavedPlans();
+  if (!Object.keys(plans).length) return; // nothing to back up
+
+  const exportObj = {
+    type: 'rigging-lift-plans-backup',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    plans,
+  };
+
+  const json = JSON.stringify(exportObj, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  a.href = url;
+  a.download = 'rigging-lift-plans-backup_' + dateStr + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+window.addEventListener('beforeunload', backupAllPlans);
+
+// ══════════════════════════════════════════════════════════════════════════
+// RESTORE FROM BACKUP BANNER
+// ══════════════════════════════════════════════════════════════════════════
+
+function checkRestoreBanner() {
+  const plans = getSavedPlans();
+  const dismissed = localStorage.getItem('rigging-restore-dismissed');
+  if (!Object.keys(plans).length && !dismissed) {
+    document.getElementById('restore-banner').style.display = 'block';
+  }
+}
+
+function dismissRestoreBanner() {
+  document.getElementById('restore-banner').style.display = 'none';
+  localStorage.setItem('rigging-restore-dismissed', '1');
+}
+
+function restoreFromBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const obj = JSON.parse(e.target.result);
+
+      // Accept both single-plan exports and full backup exports
+      let plansToImport = {};
+      if (obj.type === 'rigging-lift-plans-backup' && obj.plans) {
+        plansToImport = obj.plans;
+      } else if (obj.type === 'rigging-lift-plan' && obj.data) {
+        const id = generatePlanId();
+        plansToImport[id] = { name: obj.name || file.name.replace(/\.json$/i,''), data: obj.data, savedAt: Date.now(), createdAt: Date.now() };
+      } else {
+        throw new Error('Unrecognised format');
+      }
+
+      const count = Object.keys(plansToImport).length;
+      if (!count) throw new Error('No plans found in file');
+
+      // Merge into existing (backup may be restoring onto a fresh open)
+      const existing = getSavedPlans();
+      const merged = { ...plansToImport, ...existing }; // existing takes priority on key clash
+      setSavedPlans(merged);
+
+      // Load the most recent plan
+      const sorted = Object.entries(plansToImport).sort((a,b) => (b[1].savedAt||0) - (a[1].savedAt||0));
+      if (sorted.length) {
+        currentPlanId = sorted[0][0];
+        applyLiftPlanData(sorted[0][1].data);
+        localStorage.setItem(LP_CURRENT_KEY, currentPlanId);
+      }
+
+      refreshPlansList();
+      document.getElementById('restore-banner').style.display = 'none';
+      localStorage.removeItem('rigging-restore-dismissed');
+      showSaveStatus(`Restored ${count} plan${count>1?'s':''} from backup`);
+    } catch(err) {
+      alert('Could not restore: ' + err.message + '\nMake sure this is a valid rigging calculator backup file.');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════════════
+
+calcWeight();
+calcSelector();
+buildChecklist();
+renderPhotos();
+
+// Set default dates
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('lp-date').value = today;
+document.getElementById('lp-signoff-date').value = today;
+
+// Restore saved lift plan session & start auto-save
+restoreLiftPlanSession();
+initAutoSave();
+checkRestoreBanner();
+
+// ══════════════════════════════════════════════════════════════════════════
+// PWA — SERVICE WORKER + INSTALL PROMPT
+// ══════════════════════════════════════════════════════════════════════════
+
+// Inline service worker — caches the app for offline use
+const SW_CODE = `
+const CACHE = 'rigging-calc-v1';
+const URLS = [
+  'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css',
+  'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/fonts/tabler-icons.woff2'
+];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(URLS).catch(()=>{})));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => new Response('', {status: 503}))));
+});
+`;
+
+if ('serviceWorker' in navigator) {
+  const blob = new Blob([SW_CODE], { type: 'application/javascript' });
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).catch(() => {});
+}
+
+// Install prompt banner
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+
+  // Only show if not already installed
+  if (window.matchMedia('(display-mode: standalone)').matches) return;
+
+  const banner = document.createElement('div');
+  banner.id = 'install-banner';
+  banner.style.cssText = `
+    position:fixed; bottom:72px; left:50%; transform:translateX(-50%);
+    background:#1a1e28; border:0.5px solid rgba(0,153,153,0.4);
+    border-radius:12px; padding:12px 16px;
+    display:flex; align-items:center; gap:12px;
+    box-shadow:0 4px 24px rgba(0,0,0,0.5);
+    z-index:9999; max-width:calc(100vw - 32px); width:360px;
+    animation: slideUp 0.3s ease;
+  `;
+  banner.innerHTML = `
+    <style>@keyframes slideUp { from { opacity:0; transform:translateX(-50%) translateY(16px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }</style>
+    <i class="ti ti-download" style="font-size:24px; color:var(--accent); flex-shrink:0;"></i>
+    <div style="flex:1; min-width:0;">
+      <div style="font-size:13px; font-weight:600; color:#e0e4ec;">Install app</div>
+      <div style="font-size:11px; color:#8a90a0; margin-top:1px;">Add to home screen for offline use</div>
+    </div>
+    <button onclick="installApp()" style="font-family:inherit; font-size:12px; font-weight:600; padding:7px 14px; border-radius:8px; border:none; background:var(--accent); color:#fff; cursor:pointer; flex-shrink:0;">Install</button>
+    <button onclick="document.getElementById('install-banner').remove()" style="background:none; border:none; color:#5a6070; cursor:pointer; padding:4px; font-size:18px; flex-shrink:0;">✕</button>
+  `;
+  document.body.appendChild(banner);
+  setTimeout(() => banner.remove(), 30000);
+});
+
+function installApp() {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  deferredInstallPrompt.userChoice.then(() => {
+    deferredInstallPrompt = null;
+    const b = document.getElementById('install-banner');
+    if (b) b.remove();
+  });
+}
+</script>
+</body>
+</html>
