@@ -643,15 +643,7 @@ textarea { min-height: 70px; resize: vertical; }
 .lightbox-nav.prev { left: 18px; }
 .lightbox-nav.next { right: 18px; }
 
-@media print {
-  .app-header, .tab-bar { display: none; }
-  .tab-panel { display: block !important; page-break-inside: avoid; }
-  body { background: #fff; color: #000; }
-  .card { border: 1px solid #ccc; break-inside: avoid; }
-  .photo-card img { height: auto; max-height: 200px; }
-  .photo-remove, .photo-upload-btn { display: none !important; }
-  .lightbox-overlay { display: none !important; }
-}
+
 </style>
 </head>
 <body>
@@ -666,7 +658,7 @@ textarea { min-height: 70px; resize: vertical; }
   </div>
   <div style="display:flex; gap:12px; align-items:center;">
     <span class="header-badge">AS 4991</span>
-    <button class="btn" onclick="window.print()"><i class="ti ti-printer" aria-hidden="true"></i> Print</button>
+    <button class="btn" onclick="printLiftPlan()"><i class="ti ti-printer" aria-hidden="true"></i> Print</button>
     <svg class="se-logo" viewBox="0 0 1000 343" xmlns="http://www.w3.org/2000/svg" aria-label="Siemens Energy logo">
       <path style="fill:#099" d="m68.94,60.1q-19.36-8.71-23.66-11.4-5.17-3.33-5.17-8.6 0-14.09 25.62-14.09 18.2,0 39.41,8.47v-28.93q-28.52-5.55-43.59-5.55-27.33,0-44.34,11.72-17.21,11.83-17.21,34.42 0,17.54 11.82,29.04 9.12,8.72 39.19,21.08 16.75,6.89 20.83,10.76a11.78,11.78 0 0 1 3.98,9.03q0,14.42-27.29,14.42-19.77,0-45.44-8.08v30.07a207.29,207.27 0 0 0 47.23,5.54q27.76,0 45.2-10.53 21.52-13.01 21.52-37.76 0-17.22-10.98-28.08-9.24-9.15-37.12-21.53z m72.12,94.82h42.54v-152.27h-42.54z m122.56-65.22h59.28v-25.13h-59.28v-34.38h68.1v-27.54h-109.1v152.27h110.86v-29.09h-69.86z m191.1,10.24-38.32-97.29h-55.15v152.27h29.97v-107.81l43.8,109.36h26.37l44.67-109.36v107.81h40.33v-152.27h-52.39z m171.7-10.24h59.28v-25.13h-59.28v-34.38h68.1v-27.54h-109.1v152.27h110.85v-29.09h-69.85z m199.46,14.88l-52.3-101.93h-49.31v152.27h29.98v-103.31l53.69,103.31h47.91v-152.27h-29.97z m126.02-44.48q-19.35-8.71-23.66-11.4-5.17-3.33-5.17-8.6 0-14.09 25.62-14.09 18.2,0 39.41,8.47v-28.93q-28.52-5.55-43.59-5.55-27.33,0-44.34,11.72-17.21,11.83-17.21,34.42 0,17.54 11.82,29.04 9.12,8.72 39.19,21.08 16.76,6.89 20.83,10.76a11.78,11.78 0 0 1 3.98,9.03q0,14.42-27.29,14.42-19.77,0-45.44-8.08v30.07a207.29,207.27 0 0 0 47.23,5.54q27.76,0 45.2-10.53 21.52-13.01 21.52-37.76 0-17.22-10.98-28.08-9.24-9.15-37.12-21.53z"/>
       <path style="fill:#641e8c" d="m123.9,189.25c-13.3-.75-26.8-1.25-40.4-1.25s-27.1,.5-40.4,1.25a45.5,45.5 0 0 0-43.1,45.25v62a45.5,45.5 0 0 0 43.1,45.25c13.3,.75 26.8,1.25 40.4,1.25s27.1-.5 40.4-1.25a45.5,45.5 0 0 0 43.1-45.25v-3.5h-19.5v3.5a25.9,25.9 0 0 1-24.4,25.7c-13.1,.8-26.3,1.3-39.6,1.3s-26.5-.5-39.6-1.3a25.9,25.9 0 0 1-24.4-25.7v-62a25.9,25.9 0 0 1 24.4-25.7c13.1-.8 26.3-1.3 39.6-1.3s26.5,.5 39.6,1.3a25.9,25.9 0 0 1 24.4,25.7v21h-80.5v20h100v-41a45.5,45.5 0 0 0-43.1-45.25z m175.15,.25c-10.75-.9-21.75-1.5-32.7-1.5s-21.95,.6-32.69,1.5a45.5,45.5 0 0 0-41.31,45v107h19.5v-107a26,26 0 0 1 24.28-25.78c9.94-.69 20.02-1.22 30.22-1.22s20.29,.5 30.23,1.22a26,26 0 0 1 24.27,25.78v107h19.5v-107a45.5,45.5 0 0 0-41.3-45z m189.95-.25c-13.3-.75-26.8-1.25-40.4-1.25s-27.1,.5-40.4,1.25a45.5,45.5 0 0 0-43.1,45.25v62a45.5,45.5 0 0 0 43.1,45.25c13.3,.75 26.8,1.25 40.4,1.25s27.1-.5 40.4-1.25a45.5,45.5 0 0 0 43.1-45.25v-3.5h-19.5v3.5a25.9,25.9 0 0 1-24.4,25.7c-13.1,.8-26.3,1.3-39.6,1.3s-26.5-.5-39.6-1.3a25.9,25.9 0 0 1-24.4-25.7v-62a25.9,25.9 0 0 1 24.4-25.7c13.1-.8 26.3-1.3 39.6-1.3s26.5,.5 39.6,1.3a25.9,25.9 0 0 1 24.4,25.7v21h-80.5v20h100v-41a45.5,45.5 0 0 0-43.1-45.25z m70.59,45.24v107h19.5v-107c0-13.67 11.22-25.5 24.77-25.5h39.73v-19.51h-40.41c-21.24,.02-43.59,18.44-43.59,45.01z m221.91-45.24c-13.3-.75-26.8-1.25-40.4-1.25s-27.1,.5-40.4,1.25a45.5,45.5 0 0 0-43.1,45.25v62a45.5,45.5 0 0 0 43.1,45.25c13.3,.75 26.8,1.25 40.4,1.25s27.1-.5 40.4-1.25a45.5,45.5 0 0 0 43.1-45.25v-41h-100v20h80.5v21a25.9,25.9 0 0 1-24.4,25.7c-13.1,.8-26.3,1.3-39.6,1.3s-26.5-.5-39.6-1.3a25.9,25.9 0 0 1-24.4-25.7v-62a25.9,25.9 0 0 1 24.4-25.7c13.1-.8 26.3-1.3 39.6-1.3s26.5,.5 39.6,1.3a25.9,25.9 0 0 1 24.4,25.7v3.5h19.5v-3.5a45.5,45.5 0 0 0-43.1-45.25z m218.5,.25h-24.42l-66.25,87.9a44.8,44.8 0 0 0-9.06,27.1v37h19.5v-37a25.4,25.4 0 0 1 5.15-15.37z m-147.73,0h-25.46l69.46,82.77 12.04-15.99z"/>
@@ -955,7 +947,7 @@ textarea { min-height: 70px; resize: vertical; }
             <button class="btn" onclick="exportLiftPlanJSON()"><i class="ti ti-download" aria-hidden="true"></i> Export</button>
             <button class="btn" onclick="document.getElementById('lp-import-file').click()"><i class="ti ti-upload" aria-hidden="true"></i> Import</button>
             <input type="file" id="lp-import-file" accept=".json" style="display:none;" onchange="importLiftPlanJSON(event)">
-            <button class="btn primary" onclick="window.print()"><i class="ti ti-printer" aria-hidden="true"></i> Print</button>
+            <button class="btn primary" onclick="printLiftPlan()"><i class="ti ti-printer" aria-hidden="true"></i> Print</button>
           </div>
         </div>
         <div id="lp-save-status" style="font-size:11px; color:var(--text3); margin-top:6px; display:none;">
@@ -1001,6 +993,13 @@ textarea { min-height: 70px; resize: vertical; }
             <div class="form-group"><label for="lp-load-dims" class="form-label">Load dimensions (L × W × H)</label><input id="lp-load-dims" type="text" placeholder="e.g. 4.2m × 1.8m × 2.1m"></div>
             <div class="form-group"><label for="lp-cog" class="form-label">Centre of gravity</label><input id="lp-cog" type="text" placeholder="e.g. Centre / Offset 200mm left"></div>
             <div class="form-group" style="grid-column:span 2;"><label for="lp-rigging-config" class="form-label">Rigging configuration</label><textarea id="lp-rigging-config" placeholder="e.g. 4-leg wire rope sling, 20mm × 3m, vertical hitch to lifting lugs. 2× 4.75t bow shackles."></textarea></div>
+          </div>
+        </div>
+
+        <div class="lift-plan-section">
+          <div class="section-title"><i class="ti ti-tool" aria-hidden="true"></i> Rigging equipment</div>
+          <div class="form-grid">
+            <div class="form-group" style="grid-column:span 2;"><label for="lp-equip-notes" class="form-label">Equipment used</label><textarea id="lp-equip-notes" style="min-height:120px;" placeholder="e.g. 4-leg wire rope sling 20mm × 3m (cert SL-2024-042), 2× 4.75t bow shackles (cert SH-2024-011), master link (cert MB-2024-003), 2× tag lines 10m…"></textarea></div>
           </div>
         </div>
 
@@ -1676,8 +1675,8 @@ let autoSaveTimer = null;
 const LP_TEXT_FIELDS = [
   'lp-project', 'lp-date', 'lp-ref', 'lp-supervisor', 'lp-rigger', 'lp-dogman',
   'lp-operator', 'lp-type', 'lp-load-desc', 'lp-load-weight', 'lp-load-dims',
-  'lp-cog', 'lp-rigging-config', 'lp-crane-type', 'lp-crane-cap', 'lp-radius',
-  'lp-boom', 'lp-hazards', 'lp-controls', 'lp-wind', 'lp-ground',
+  'lp-cog', 'lp-rigging-config', 'lp-equip-notes', 'lp-crane-type', 'lp-crane-cap',
+  'lp-radius', 'lp-boom', 'lp-hazards', 'lp-controls', 'lp-wind', 'lp-ground',
   'lp-signoff-name', 'lp-signoff-date', 'lp-notes'
 ];
 
@@ -2046,6 +2045,188 @@ function backupAllPlans() {
 }
 
 window.addEventListener('beforeunload', backupAllPlans);
+
+// ══════════════════════════════════════════════════════════════════════════
+// PRINT LIFT PLAN
+// ══════════════════════════════════════════════════════════════════════════
+
+function printLiftPlan() {
+  const g = id => (document.getElementById(id) || {}).value || '';
+  const plans = getSavedPlans();
+  const planName = currentPlanId && plans[currentPlanId] ? plans[currentPlanId].name : 'Lift Plan';
+
+  // Gather checklist state
+  const checklistRows = CHECKLIST_ITEMS.map((item, i) => {
+    const checked = (document.getElementById('chk-' + i) || {}).checked;
+    return `<tr>
+      <td style="padding:5px 8px; border-bottom:1px solid #e0e0e0;">${item}</td>
+      <td style="padding:5px 8px; border-bottom:1px solid #e0e0e0; text-align:center; font-weight:600; color:${checked ? '#2e7d32' : '#c62828'};">${checked ? '✓' : '✗'}</td>
+    </tr>`;
+  }).join('');
+
+  // Gather photos
+  const photoCards = Array.from(document.querySelectorAll('#photo-grid .photo-card'));
+  const photosHtml = photoCards.length ? `
+    <div class="section-title">Lift photos</div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; margin-top:8px;">
+      ${photoCards.map(card => {
+        const img = card.querySelector('img');
+        const caption = (card.querySelector('textarea') || {}).value || '';
+        const tag = (card.querySelector('select') || {}).value || '';
+        return img ? `<div style="break-inside:avoid;">
+          <img src="${img.src}" style="width:100%; height:160px; object-fit:cover; border-radius:6px; border:1px solid #ddd;">
+          ${tag ? `<div style="font-size:10px; font-weight:600; color:#009999; text-transform:uppercase; margin-top:4px;">${tag}</div>` : ''}
+          ${caption ? `<div style="font-size:11px; color:#555; margin-top:2px;">${caption}</div>` : ''}
+        </div>` : '';
+      }).join('')}
+    </div>` : '';
+
+  // Crane utilisation
+  const loadKg = parseFloat(g('lp-load-weight')) || 0;
+  const craneSwl = parseFloat(g('lp-crane-cap')) || 0;
+  const utilPct = craneSwl > 0 ? Math.round(loadKg / craneSwl * 100) : null;
+  const utilHtml = utilPct !== null ? `
+    <div style="margin-top:8px; padding:8px 12px; border-radius:6px; background:${utilPct >= 80 ? '#fff3e0' : '#e8f5e9'}; border:1px solid ${utilPct >= 80 ? '#ff9800' : '#4caf50'}; font-size:12px; font-weight:600; color:${utilPct >= 80 ? '#e65100' : '#2e7d32'};">
+      Crane utilisation: ${utilPct}% ${utilPct >= 90 ? '⚠ CRITICAL LIFT' : utilPct >= 80 ? '⚠ Near capacity' : '✓ Within capacity'}
+    </div>` : '';
+
+  function row(label, value) {
+    return value ? `<tr><td style="padding:5px 8px; border-bottom:1px solid #f0f0f0; color:#666; font-size:12px; white-space:nowrap; width:160px;">${label}</td><td style="padding:5px 8px; border-bottom:1px solid #f0f0f0; font-size:12px;">${value}</td></tr>` : '';
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lift Plan — ${planName}</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 13px; color: #111; background: #fff; padding: 24px; }
+  .print-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #009999; padding-bottom: 12px; margin-bottom: 20px; }
+  .print-title { font-size: 22px; font-weight: 700; color: #111; }
+  .print-sub { font-size: 12px; color: #666; margin-top: 3px; }
+  .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #009999; margin: 18px 0 8px; padding-bottom: 5px; border-bottom: 1px solid #e0e0e0; }
+  table { width: 100%; border-collapse: collapse; }
+  .badge { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:3px; background:#e0f7f7; color:#007777; border:1px solid #b2ebeb; }
+  .notes-box { background:#f9f9f9; border:1px solid #e0e0e0; border-radius:6px; padding:10px 12px; font-size:12px; white-space:pre-wrap; line-height:1.6; }
+  .signoff-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:12px; }
+  .signoff-box { border:1px solid #ccc; border-radius:6px; padding:12px; }
+  .signoff-label { font-size:10px; text-transform:uppercase; letter-spacing:1px; color:#999; margin-bottom:6px; }
+  .signoff-line { border-bottom:1px solid #999; height:32px; margin-top:8px; }
+  @media print {
+    body { padding: 12px; }
+    @page { margin: 15mm; size: A4; }
+  }
+</style>
+</head>
+<body>
+
+<div class="print-header">
+  <div>
+    <div class="print-title">${planName}</div>
+    <div class="print-sub">Siemens Energy — Field Operations &nbsp;|&nbsp; Printed: ${new Date().toLocaleDateString('en-AU', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+  </div>
+  <div style="text-align:right;">
+    ${g('lp-ref') ? `<div class="badge">Ref: ${g('lp-ref')}</div>` : ''}
+    <div style="font-size:11px; color:#666; margin-top:4px;">${g('lp-type') || ''}</div>
+  </div>
+</div>
+
+<div class="section-title">General information</div>
+<table>
+  ${row('Project / Site', g('lp-project'))}
+  ${row('Date of lift', g('lp-date'))}
+  ${row('Lift supervisor', g('lp-supervisor'))}
+  ${row('Rigger(s)', g('lp-rigger'))}
+  ${row('Dogman', g('lp-dogman'))}
+  ${row('Crane operator', g('lp-operator'))}
+  ${row('Lift classification', g('lp-type'))}
+</table>
+
+<div class="section-title">Load details</div>
+<table>
+  ${row('Load description', g('lp-load-desc'))}
+  ${row('Load weight', g('lp-load-weight') ? g('lp-load-weight') + ' kg' : '')}
+  ${row('Dimensions (L × W × H)', g('lp-load-dims'))}
+  ${row('Centre of gravity', g('lp-cog'))}
+</table>
+${g('lp-rigging-config') ? `<div style="margin-top:8px;"><div style="font-size:11px; color:#999; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.8px;">Rigging configuration</div><div class="notes-box">${g('lp-rigging-config')}</div></div>` : ''}
+
+${g('lp-equip-notes') ? `
+<div class="section-title">Rigging equipment</div>
+<div class="notes-box">${g('lp-equip-notes')}</div>` : ''}
+
+<div class="section-title">Crane details</div>
+<table>
+  ${row('Crane type / model', g('lp-crane-type'))}
+  ${row('SWL at radius', g('lp-crane-cap') ? g('lp-crane-cap') + ' kg' : '')}
+  ${row('Working radius', g('lp-radius') ? g('lp-radius') + ' m' : '')}
+  ${row('Boom length', g('lp-boom') ? g('lp-boom') + ' m' : '')}
+</table>
+${utilHtml}
+
+<div class="section-title">Risk assessment</div>
+<table>
+  ${row('Max wind speed', g('lp-wind') ? g('lp-wind') + ' km/h' : '')}
+  ${row('Ground conditions', g('lp-ground'))}
+</table>
+${g('lp-hazards') ? `<div style="margin-top:8px;"><div style="font-size:11px; color:#999; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.8px;">Identified hazards</div><div class="notes-box">${g('lp-hazards')}</div></div>` : ''}
+${g('lp-controls') ? `<div style="margin-top:8px;"><div style="font-size:11px; color:#999; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.8px;">Control measures</div><div class="notes-box">${g('lp-controls')}</div></div>` : ''}
+
+<div class="section-title">Pre-lift checklist</div>
+<table>
+  <thead><tr>
+    <th style="padding:5px 8px; text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:1px; color:#999; border-bottom:2px solid #e0e0e0;">Item</th>
+    <th style="padding:5px 8px; text-align:center; font-size:10px; text-transform:uppercase; letter-spacing:1px; color:#999; border-bottom:2px solid #e0e0e0; width:60px;">Done</th>
+  </tr></thead>
+  <tbody>${checklistRows}</tbody>
+</table>
+
+${photosHtml}
+
+${g('lp-notes') ? `<div class="section-title">Additional notes</div><div class="notes-box">${g('lp-notes')}</div>` : ''}
+
+<div class="section-title">Sign-off</div>
+<div class="signoff-grid">
+  <div class="signoff-box">
+    <div class="signoff-label">Approved by</div>
+    <div style="font-size:13px; font-weight:600;">${g('lp-signoff-name') || '&nbsp;'}</div>
+    <div style="font-size:11px; color:#666; margin-top:2px;">${g('lp-signoff-date') || ''}</div>
+    <div class="signoff-label" style="margin-top:16px;">Signature</div>
+    <div class="signoff-line"></div>
+  </div>
+  <div class="signoff-box">
+    <div class="signoff-label">Lift supervisor</div>
+    <div style="font-size:13px; font-weight:600;">${g('lp-supervisor') || '&nbsp;'}</div>
+    <div class="signoff-label" style="margin-top:16px;">Signature</div>
+    <div class="signoff-line"></div>
+  </div>
+</div>
+
+</body></html>`;
+
+  // Use a hidden iframe instead of window.open — can't be blocked by the browser
+  let iframe = document.getElementById('print-iframe');
+  if (iframe) iframe.remove();
+  iframe = document.createElement('iframe');
+  iframe.id = 'print-iframe';
+  iframe.style.cssText = 'position:fixed; top:-9999px; left:-9999px; width:0; height:0; border:none;';
+  document.body.appendChild(iframe);
+
+  iframe.onload = function() {
+    try {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    } catch(e) {
+      alert('Print failed: ' + e.message);
+    }
+  };
+
+  const doc = iframe.contentDocument || iframe.contentWindow.document;
+  doc.open();
+  doc.write(html);
+  doc.close();
+}
 
 // ══════════════════════════════════════════════════════════════════════════
 // RESTORE FROM BACKUP BANNER
